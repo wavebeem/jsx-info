@@ -8,9 +8,10 @@ program.version(pkg.version, "-v, --version");
 
 // TODO:
 // - Test perf and maybe add loading spinner?
-// - Add option to sort alphabetically
 // - Chart usage of components vs. each other
-// - Flag to disable colorized output
+// - Flag for --sort <alphabetical|usage>
+// - Flag for --report <all|...> to specify which data to report
+// - Flag for --color <yes|no|auto>
 
 program
   .arguments("[components...]")
