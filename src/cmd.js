@@ -6,6 +6,7 @@ const chalk = require("chalk");
 
 class Counter {
   constructor() {
+    this._allComponentsCount = 0;
     this._componentCounts = new Map();
     this._propCounts = new Map();
   }
@@ -15,6 +16,7 @@ class Counter {
     if (!prev) {
       this._propCounts.set(component, new Map());
     }
+    this._allComponentsCount++;
     this._componentCounts.set(component, prev + 1);
   }
 
@@ -26,6 +28,12 @@ class Counter {
 
   getComponentsList() {
     return this.getSortedMap(this._componentCounts).map(x => x.name);
+  }
+
+  getAllComponentsReport() {
+    const total = this._allComponentsCount;
+    const counts = this.getSortedMap(this._componentCounts);
+    return { total, counts };
   }
 
   getSortedMap(map) {
@@ -51,9 +59,6 @@ class Counter {
   }
 
   getComponentReport(component) {
-    if (!component) {
-      throw new Error();
-    }
     const componentCount = this._componentCounts.get(component);
     const propCounts = this.getSortedMap(this._propCounts.get(component));
     return { componentCount, propCounts };
@@ -164,8 +169,33 @@ function cmd(components, options) {
   const componentsSet = new Set(components);
   const counter = new Counter();
   getUsage({ componentsSet, counter, options });
+  printComponentsReport(counter);
   for (const comp of counter.getComponentsList()) {
-    printReport(comp, counter.getComponentReport(comp));
+    printReport(counter, comp);
+  }
+}
+
+function printComponentsReport(counter) {
+  const { total, counts } = counter.getAllComponentsReport();
+  const comps = counter.getComponentsList();
+  const s = `${comps.length} ${
+    comps.length === 1 ? "component" : "components"
+  } used ${total} ${total === 1 ? "time" : "times"}`;
+  if (counts.length === 0) {
+    printHeading(s);
+    return;
+  }
+  printHeading(`${s}:`);
+  const maxLen = counts[0].count.toString().length;
+  for (const { name, count } of counts) {
+    console.log(
+      [
+        "",
+        chalk.bold(count.toString().padStart(maxLen)),
+        textMeter(count, total),
+        name
+      ].join("  ")
+    );
   }
 }
 
@@ -174,8 +204,8 @@ function printHeading(...args) {
   console.log(chalk.cyan(...args));
 }
 
-function printReport(component, report) {
-  const { componentCount, propCounts } = report;
+function printReport(counter, component) {
+  const { componentCount, propCounts } = counter.getComponentReport(component);
   const word = componentCount === 1 ? "time" : "times";
   const compName = chalk.bold(`<${component}>`);
   const first = `${compName} was used ${componentCount} ${word}`;

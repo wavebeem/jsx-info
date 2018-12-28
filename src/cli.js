@@ -8,7 +8,6 @@ program.version(pkg.version, "-v, --version");
 
 // TODO:
 // - Test perf and maybe add loading spinner?
-// - Chart usage of components vs. each other
 // - Flag for --sort <alphabetical|usage>
 // - Flag for --report <all|...> to specify which data to report
 // - Flag for --color <yes|no|auto>
