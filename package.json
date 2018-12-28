@@ -1,0 +1,30 @@
+{
+  "name": "jsx-info",
+  "version": "1.0.0",
+  "description": "displays a report of JSX component and prop usage",
+  "bin": "src/jsx-info.js",
+  "scripts": {
+    "start": "node src/jsx-info.js",
+    "test": "eslint src && prettier --list-different \"src/**/*.js\""
+  },
+  "keywords": [
+    "jsx",
+    "react",
+    "stats",
+    "statistics",
+    "metriics"
+  ],
+  "author": "Brian Mock <brian@mockbrian.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.2.3",
+    "@babel/traverse": "^7.2.3",
+    "chalk": "^2.4.1",
+    "commander": "^2.19.0",
+    "globby": "^8.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "prettier": "^1.15.3"
+  }
+}
