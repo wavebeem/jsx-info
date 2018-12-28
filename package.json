@@ -21,7 +21,8 @@
     "@babel/traverse": "^7.2.3",
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
-    "globby": "^8.0.1"
+    "globby": "^8.0.1",
+    "log-update": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^5.11.1",

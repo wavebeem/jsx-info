@@ -3,6 +3,9 @@ const globby = require("globby");
 const { parse } = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 const chalk = require("chalk");
+const progressLogger = require("log-update").create(process.stderr, {
+  showCursor: true
+});
 
 class Counter {
   constructor() {
@@ -89,8 +92,31 @@ function getPropName(node) {
   }
 }
 
+class Spinner {
+  constructor() {
+    this.time = Date.now();
+    this.frames = ["   ", ".  ", ".. ", "..."];
+    this.index = 0;
+    this.speed = 350;
+  }
+
+  toString() {
+    const time = Date.now();
+    const dt = time - this.time;
+    if (dt > this.speed) {
+      this.time = time;
+      this.index = (this.index + 1) % this.frames.length;
+    }
+    return this.frames[this.index];
+  }
+}
+
+const spinner = new Spinner();
+
 function safeParse(filename) {
   try {
+    const message = chalk.cyan(chalk.bold(spinner), "Scanning files");
+    progressLogger(`\n${message}\n\n${filename}\n`);
     return parse(fs.readFileSync(filename, "utf8"), {
       sourceType: "unambiguous",
       allowReturnOutsideFunction: true,
@@ -138,6 +164,8 @@ function updateUsageFromFile({ componentsSet, counter, filename }) {
 }
 
 function getUsage({ componentsSet, counter, options }) {
+  const message = chalk.cyan(chalk.bold(spinner), "Finding files");
+  progressLogger(`\n${message}\n`);
   const filenames = globby.sync(options.files, {
     cwd: options.directory || process.cwd(),
     gitignore: options.gitignore,
@@ -169,6 +197,7 @@ function cmd(components, options) {
   const componentsSet = new Set(components);
   const counter = new Counter();
   getUsage({ componentsSet, counter, options });
+  progressLogger.clear();
   printComponentsReport(counter);
   for (const comp of counter.getComponentsList()) {
     printReport(counter, comp);

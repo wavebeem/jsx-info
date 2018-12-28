@@ -7,7 +7,7 @@ program.name(pkg.name);
 program.version(pkg.version, "-v, --version");
 
 // TODO:
-// - Test perf and maybe add loading spinner?
+// - Flag for --quiet to hide progress output
 // - Flag for --sort <alphabetical|usage>
 // - Flag for --report <all|...> to specify which data to report
 // - Flag for --color <yes|no|auto>
