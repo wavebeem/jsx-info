@@ -4,6 +4,8 @@
   "description": "displays a report of JSX component and prop usage",
   "bin": "src/jsx-info.js",
   "scripts": {
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags && npm publish",
     "start": "node src/jsx-info.js",
     "test": "eslint src && prettier --list-different \"src/**/*.js\""
   },
@@ -16,7 +18,7 @@
     "react",
     "stats",
     "statistics",
-    "metriics"
+    "metrics"
   ],
   "author": "Brian Mock <brian@mockbrian.com>",
   "license": "MIT",
