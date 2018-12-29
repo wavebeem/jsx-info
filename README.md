@@ -2,7 +2,7 @@
 
 Displays a report of JSX component and prop usage.
 
-Watch my [demonstration][] video.
+Watch my [demonstration][] video for more information.
 
 ## Installation
 
