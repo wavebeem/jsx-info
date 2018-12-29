@@ -4,6 +4,22 @@ Displays a report of JSX component and prop usage.
 
 Watch my [demonstration][] video for more information.
 
+## Why
+
+First of all, I thought it would be cool to see all this info. But more
+importantly, I think `jsx-info` can be used to help refactor your code.
+
+Let's say you have a component called `<DataTable>` that takes 43 different
+props. If you needed to rewrite `<DataTable>` from scratch, you might not want
+to keep as many different props. Using `jsx-info` you could analyze which props
+get used the most and start porting that functionality first.
+
+If the usage of a particular prop is very low, you might even choose to get rid
+of that prop and rewrite the calling code to use something else instead.
+
+The intended workflow here is to run `jsx-info` and compare the data with your
+prop-types or TypeScript/Flow type definitions to find discrepencies.
+
 ## Installation
 
 Automatically install and run `jsx-info`:
