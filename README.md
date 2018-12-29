@@ -15,8 +15,6 @@ Automatically install and run `jsx-info`:
     $ npm i -D jsx-info
     $ npx jsx-info
 
-You can also install `jsx-info` globally, but I do not recommend it.
-
 ## Usage
 
     $ npx jsx-info
