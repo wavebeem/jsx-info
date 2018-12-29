@@ -7,6 +7,10 @@
     "start": "node src/jsx-info.js",
     "test": "eslint src && prettier --list-different \"src/**/*.js\""
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wavebeem/jsx-info.git"
+  },
   "keywords": [
     "jsx",
     "react",
