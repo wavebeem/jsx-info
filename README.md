@@ -64,8 +64,9 @@ way I can make this tool better is by getting feedback from users.
 
 ## License
 
-Copyright © Brian Mock under the [MIT License][].
+Copyright © [Brian Mock][] under the [MIT License][].
 
+[brian mock]: https://mockbrian.com
 [demonstration]: https://youtu.be/e_vtfYJW9aM
 [code of conduct]: CODE_OF_CONDUCT.md
 [mit license]: LICENSE.md
