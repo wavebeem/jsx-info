@@ -1,6 +1,8 @@
 # jsx-info
 
-Displays a report of JSX component and prop usage
+Displays a report of JSX component and prop usage.
+
+Watch my [demonstration][] video.
 
 ## Installation
 
@@ -66,6 +68,7 @@ way I can make this tool better is by getting feedback from users.
 
 Copyright © Brian Mock under the [MIT License][].
 
+[demonstration]: https://youtu.be/e_vtfYJW9aM
 [code of conduct]: CODE_OF_CONDUCT.md
 [mit license]: LICENSE.md
 [proposals]: https://tc39.github.io/process-document/
