@@ -1,20 +1,13 @@
 const program = require("commander");
-
 const pkg = require("../package.json");
-const cmd = require("./cmd").default;
 
-function concat(x, acc) {
-  acc.push(x);
-  return acc;
+function collect(val, memo) {
+  memo.push(val);
+  return memo;
 }
 
 program.name(pkg.name);
 program.version(pkg.version, "-v, --version");
-
-// TODO:
-// - Flag for --sort <alphabetical|usage>
-// - Flag for --report <all|...> to specify which data to report
-
 program
   .arguments("[components...]")
   .description("Displays a report of JSX component and prop usage")
@@ -28,7 +21,7 @@ program
   .option(
     "--add-babel-plugin <plugin>",
     "add a babel plugin (can be repeated)",
-    concat,
+    collect,
     []
   )
   .option("--no-gitignore", "disable reading .gitignore files")
@@ -40,7 +33,20 @@ program
     "--files <pattern>",
     "glob pattern used to find input files",
     "**/*.{js,jsx,tsx}"
-  );
+  )
+  .option(
+    "-s, --sort <alphabetical|usage>",
+    "specify sort type of the report",
+    /^(alphabetical|usage)$/i,
+    "usage"
+  )
+  .option(
+    "-r, --report <all|usage|props|children>",
+    "specify reports to show (can be repeted)",
+    collect,
+    ["all"]
+  )
+  .parse(process.argv);
 
 program.on("--help", () => {
   // eslint-disable-next-line no-console
@@ -62,9 +68,13 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
 
-function main() {
-  program.parse(process.argv);
-  cmd();
-}
-
-exports.default = main;
+module.exports = {
+  showProgress: program.progress,
+  components: program.args,
+  babelPlugins: program.addBabelPlugin,
+  directory: program.directory,
+  gitignore: program.gitignore,
+  files: program.files,
+  sort: program.sort,
+  report: program.report
+};
