@@ -1,3 +1,8 @@
+# v1.2.0
+
+- Adds `--ignore` flag
+- Makes `--files` flag repeatable
+
 # v1.1.0
 
 - Adds `--color` flag

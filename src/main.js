@@ -199,6 +199,7 @@ function getUsage({ componentsSet, counter }) {
   }
   const filenames = globby.sync(program.files, {
     cwd: program.directory || process.cwd(),
+    ignore: program.ignore,
     gitignore: program.gitignore,
     absolute: true,
     onlyFiles: true

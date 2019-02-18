@@ -3,7 +3,7 @@ const program = require("commander");
 const pkg = require("../package.json");
 const cmd = require("./cmd").default;
 
-function concat(x, acc) {
+function listOption(x, acc = []) {
   acc.push(x);
   return acc;
 }
@@ -25,21 +25,25 @@ program
   // https://github.com/tj/commander.js/issues/108
   .option("--color", "force enable color")
   .option("--no-color", "force disable color")
+  .option("--no-gitignore", "disable reading .gitignore files")
   .option(
     "--add-babel-plugin <plugin>",
-    "add a babel plugin (can be repeated)",
-    concat,
-    []
+    "adds a babel plugin (repeatable)",
+    listOption
   )
-  .option("--no-gitignore", "disable reading .gitignore files")
   .option(
     "--directory <directory>",
     "directory to use as the base for finding files instead of cwd"
   )
   .option(
+    "--ignore <pattern>",
+    "adds a glob pattern used to ignore input files (repeatable)",
+    listOption
+  )
+  .option(
     "--files <pattern>",
-    "glob pattern used to find input files",
-    "**/*.{js,jsx,tsx}"
+    "adds a glob pattern used to find input files (repeatable)",
+    listOption
   );
 
 program.on("--help", () => {
@@ -53,6 +57,11 @@ Examples:
   $ ${pkg.name} div Tab.Container
 
 
+  # Ignore any folder named at any depth named \`__test__\`,
+  # as well as \`packages/legacy\`
+  $ ${pkg.name} --ignore '**/__test__' --ignore packages/legacy
+
+
   # Enable Babel plugins
   $ ${
     pkg.name
@@ -64,6 +73,8 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 
 function main() {
   program.parse(process.argv);
+  program.directory = program.directory || process.cwd();
+  program.files = program.files || ["**/*.{js,jsx,tsx}"];
   cmd();
 }
 
