@@ -1,7 +1,11 @@
+# v1.2.1
+
+- Fixes crash if there were no `--ignore` flags
+
 # v1.2.0
 
-- Adds `--ignore` flag
-- Makes `--files` flag repeatable
+- Adds `--ignore <pattern>` flag
+- Makes `--files <pattern>` flag repeatable
 
 # v1.1.0
 

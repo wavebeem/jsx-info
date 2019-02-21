@@ -75,6 +75,7 @@ function main() {
   program.parse(process.argv);
   program.directory = program.directory || process.cwd();
   program.files = program.files || ["**/*.{js,jsx,tsx}"];
+  program.ignore = program.ignore || [];
   cmd();
 }
 
