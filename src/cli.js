@@ -73,6 +73,7 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 
 function main() {
   program.parse(process.argv);
+  program.addBabelPlugin = program.addBabelPlugin || process.cwd();
   program.directory = program.directory || process.cwd();
   program.files = program.files || ["**/*.{js,jsx,tsx}"];
   program.ignore = program.ignore || [];
