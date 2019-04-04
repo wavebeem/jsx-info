@@ -2,9 +2,7 @@ const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
 function createProp(attributeNode) {
-  return getPropName(attributeNode);
-
-  function getPropName(attributeNode) {
+  function getAttributeName(attributeNode) {
     switch (attributeNode.type) {
       case "JSXAttribute":
         return attributeNode.name.name;
@@ -14,11 +12,11 @@ function createProp(attributeNode) {
         throw new Error(`unexpected node type: ${attributeNode.type}`);
     }
   }
+
+  return getAttributeName(attributeNode);
 }
 
 function createComponent(componentNode) {
-  return getDottedName(componentNode.openingElement.name);
-
   function getDottedName(nameNode) {
     switch (nameNode.type) {
       case "JSXMemberExpression":
@@ -31,6 +29,8 @@ function createComponent(componentNode) {
         throw new Error(`unexpected node type: ${nameNode.type}`);
     }
   }
+
+  return getDottedName(componentNode.openingElement.name);
 }
 
 /**
