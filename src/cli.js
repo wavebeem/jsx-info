@@ -22,8 +22,7 @@ program
   .option(
     "--add-babel-plugin <plugin>",
     "adds a babel plugin (repeatable)",
-    listOption,
-    [process.cwd()]
+    listOption
   )
   .option(
     "--directory <directory>",
@@ -32,8 +31,7 @@ program
   .option(
     "--ignore <pattern>",
     "adds a glob pattern used to ignore input files (repeatable)",
-    listOption,
-    []
+    listOption
   )
   .option(
     "--files <pattern>",
@@ -49,8 +47,7 @@ program
   .option(
     "--report <usage|props|children>",
     "specify reports to show (can be repeted)",
-    listOption,
-    []
+    listOption
   )
   .parse(process.argv);
 
@@ -82,10 +79,11 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 module.exports = {
   components: program.args,
   showProgress: program.progress,
-  babelPlugins: program.addBabelPlugin,
+  babelPlugins: program.addBabelPlugin || [process.cwd()],
   directory: program.directory,
   gitignore: program.gitignore,
+  ignore: program.ignore || [],
   files: program.files,
   sort: program.sort,
-  report: program.report
+  report: program.report || []
 };
