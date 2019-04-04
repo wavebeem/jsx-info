@@ -7,7 +7,8 @@ const {
   report,
   sort,
   showProgress,
-  babelPlugins
+  babelPlugins,
+  ignore
 } = require("./cli");
 const parse = require("./parser");
 const Reporter = require("./reporter");
@@ -16,7 +17,12 @@ const codeSource = require("./code-source");
 
 // Find Files
 if (showProgress) printer.printProgress();
-const filenames = codeSource.searchForFiles(files, gitignore, directory);
+const filenames = codeSource.searchForFiles({
+  patterns: files,
+  gitignore,
+  directory,
+  ignore
+});
 
 // Scan Files
 const reporter = new Reporter(sort);
