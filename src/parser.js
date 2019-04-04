@@ -37,7 +37,7 @@ function createComponent(componentNode) {
  * @typedef Options
  * @property {boolean} typescript is the code in typescript default `false`
  * @property {string[]} babelPlugins additional babel plugins to be used
- * @property {string[]} onlyComponents emitt for only these components
+ * @property {string[]} onlyComponents feedback for only these components
  * @property {(component:string) => void} onComponent called when a component was found
  * @property {(component:string, prop:string) => void} onProp called when a component prop was found
  * @property {(component:string, child:string) => void} onChild called when a component child was found
@@ -46,12 +46,6 @@ function createComponent(componentNode) {
 /**
  * @param {string} code the code containing JSX
  * @param {Options?} options parsing options
- * @returns {import('events').EventEmitter}
- *
- * event names are:
- * - `component` a new component found
- * - `prop` a new prop of a component found
- * - `child` a child of a component found
  */
 function parse(code, options = {}) {
   const {
