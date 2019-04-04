@@ -6,7 +6,8 @@ const {
   components,
   report,
   sort,
-  showProgress
+  showProgress,
+  babelPlugins
 } = require("./cli");
 const parse = require("./parser");
 const Reporter = require("./reporter");
@@ -24,6 +25,7 @@ for (const filename of filenames) {
 
   try {
     parse(codeSource.codeFromFile(filename), {
+      babelPlugins,
       onlyComponents: components,
       onComponent: reporter.addComponent.bind(reporter),
       onChild: reporter.addChild.bind(reporter),
