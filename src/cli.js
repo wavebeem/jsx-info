@@ -22,16 +22,18 @@ program
   .option(
     "--add-babel-plugin <plugin>",
     "adds a babel plugin (repeatable)",
-    listOption
+    listOption,
+    [process.cwd()]
   )
   .option(
-    "-d, --directory <directory>",
+    "--directory <directory>",
     "directory to use as the base for finding files instead of cwd"
   )
   .option(
     "--ignore <pattern>",
     "adds a glob pattern used to ignore input files (repeatable)",
-    listOption
+    listOption,
+    []
   )
   .option(
     "--files <pattern>",
@@ -39,15 +41,16 @@ program
     "**/*.{js,jsx,tsx}"
   )
   .option(
-    "-s, --sort <alphabetical|usage>",
+    "--sort <alphabetical|usage>",
     "specify sort type of the report",
     /^(alphabetical|usage)$/i,
     "usage"
   )
   .option(
-    "-r, --report <usage|props|children>",
+    "--report <usage|props|children>",
     "specify reports to show (can be repeted)",
-    listOption
+    listOption,
+    []
   )
   .parse(process.argv);
 
