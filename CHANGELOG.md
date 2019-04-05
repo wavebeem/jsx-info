@@ -1,3 +1,11 @@
+# v1.2.3
+
+- Fixes crash if there were no `--add-babel-plugin` flags
+
+# v1.2.2
+
+- No changes
+
 # v1.2.1
 
 - Fixes crash if there were no `--ignore` flags
