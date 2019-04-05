@@ -11,6 +11,16 @@ class Reporter {
     this._components = new Map();
     this._componentProps = new Map();
     this._componentChildren = new Map();
+
+    // bindings
+    this.addParseError = this.addParseError.bind(this);
+    this.addComponent = this.addComponent.bind(this);
+    this.addChild = this.addChild.bind(this);
+    this.addProp = this.addProp.bind(this);
+    this.reportChildrenUsage = this.reportChildrenUsage.bind(this);
+    this.reportComponentUsage = this.reportComponentUsage.bind(this);
+    this.reportPropUsage = this.reportPropUsage.bind(this);
+    this.reportErrors = this.reportErrors.bind(this);
   }
 
   _sumValues(map) {

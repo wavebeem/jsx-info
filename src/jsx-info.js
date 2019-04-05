@@ -33,9 +33,9 @@ for (const filename of filenames) {
     parse(codeSource.codeFromFile(filename), {
       babelPlugins,
       onlyComponents: components,
-      onComponent: reporter.addComponent.bind(reporter),
-      onChild: reporter.addChild.bind(reporter),
-      onProp: reporter.addProp.bind(reporter)
+      onComponent: reporter.addComponent,
+      onChild: reporter.addChild,
+      onProp: reporter.addProp
     });
   } catch (error) {
     if (error instanceof SyntaxError) {
