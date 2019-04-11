@@ -2,7 +2,7 @@ const chalk = require("chalk");
 const logUpdate = require("log-update");
 
 exports.styleComponentName = componentName => {
-  return chalk.bold.blue("<" + componentName + ">");
+  return chalk.bold.cyan("<" + componentName + ">");
 };
 
 exports.stylePropName = propName => {
@@ -10,7 +10,7 @@ exports.stylePropName = propName => {
 };
 
 exports.styleNumber = number => {
-  return chalk.bold.yellow(number);
+  return chalk.bold(number);
 };
 
 exports.styleError = errorMessage => {

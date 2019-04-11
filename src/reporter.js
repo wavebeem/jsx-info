@@ -112,11 +112,14 @@ class Reporter {
 
   reportPropUsage() {
     for (const [componentName, props] of this._sortMap(this._componentProps)) {
+      const componentUsage = this._components.get(componentName);
       printer.print(
         printer.styleHeading(
           `${printer.styleComponentName(
             componentName
-          )} used with the following prop usage:`
+          )} was used ${componentUsage} ${
+            componentUsage === 1 ? "time" : "times"
+          } with the following prop usage:`
         )
       );
 
