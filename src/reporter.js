@@ -100,10 +100,11 @@ class Reporter {
     const textMeter = printer.createTextMeter(totalComponentUsageCount);
     for (const [componentName, count] of this._sortMap(this._components)) {
       printer.print(
-        " ",
-        printer.styleNumber(count),
+        "",
+        printer.styleNumber(count.toString().padStart(3)),
         "",
         textMeter(count),
+        "",
         componentName
       );
     }
@@ -122,8 +123,8 @@ class Reporter {
       const textMeter = printer.createTextMeter(this._sumValues(props));
       for (const [propName, count] of this._sortMap(props)) {
         printer.print(
-          " ",
-          printer.styleNumber(count),
+          "",
+          printer.styleNumber(count.toString().padStart(3)),
           "",
           textMeter(count),
           "",
