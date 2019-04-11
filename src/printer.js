@@ -66,7 +66,7 @@ exports.clearProgress = () => {
 };
 
 exports.printProgress = () => {
-  progressLogger(exports.styleHeading("Finding files ", spinner));
+  progressLogger(exports.styleHeading("Finding files"));
 };
 
 exports.printScanningFile = filename => {
