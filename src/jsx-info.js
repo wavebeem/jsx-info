@@ -34,7 +34,6 @@ for (const filename of filenames) {
       babelPlugins,
       onlyComponents: components,
       onComponent: reporter.addComponent,
-      onChild: reporter.addChild,
       onProp: reporter.addProp
     });
   } catch (error) {
@@ -51,16 +50,12 @@ printer.clearProgress();
 if (!report.length) {
   reporter.reportComponentUsage();
   reporter.reportPropUsage();
-  reporter.reportChildrenUsage();
 } else {
   if (report.indexOf("usage") !== -1) {
     reporter.reportComponentUsage();
   }
   if (report.indexOf("props") !== -1) {
     reporter.reportPropUsage();
-  }
-  if (report.indexOf("children") !== -1) {
-    reporter.reportChildrenUsage();
   }
 }
 reporter.reportErrors();

@@ -10,14 +10,11 @@ class Reporter {
     this._suggestedPlugins = new Set();
     this._components = new Map();
     this._componentProps = new Map();
-    this._componentChildren = new Map();
 
     // bindings
     this.addParseError = this.addParseError.bind(this);
     this.addComponent = this.addComponent.bind(this);
-    this.addChild = this.addChild.bind(this);
     this.addProp = this.addProp.bind(this);
-    this.reportChildrenUsage = this.reportChildrenUsage.bind(this);
     this.reportComponentUsage = this.reportComponentUsage.bind(this);
     this.reportPropUsage = this.reportPropUsage.bind(this);
     this.reportErrors = this.reportErrors.bind(this);
@@ -53,13 +50,6 @@ class Reporter {
       componentName,
       (this._components.get(componentName) || 0) + 1
     );
-  }
-
-  addChild(componentName, childComponentName) {
-    const children = this._componentChildren.get(componentName) || new Map();
-    const prevChildUsage = children.get(childComponentName) || 0;
-    children.set(childComponentName, prevChildUsage + 1);
-    this._componentChildren.set(componentName, children);
   }
 
   addProp(componentName, propName) {
@@ -138,29 +128,6 @@ class Reporter {
           textMeter(count),
           "",
           printer.stylePropName(propName)
-        );
-      }
-    }
-  }
-
-  reportChildrenUsage() {
-    for (const [componentName, children] of this._sortMap(
-      this._componentChildren
-    )) {
-      printer.print(
-        "\n" + printer.styleComponentName(componentName),
-        "used the following children:"
-      );
-
-      const textMeter = printer.createTextMeter(this._sumValues(children));
-      for (const [childComponentName, count] of this._sortMap(children)) {
-        printer.print(
-          " ",
-          printer.styleNumber(count),
-          "",
-          textMeter(count),
-          "",
-          printer.styleComponentName(childComponentName)
         );
       }
     }

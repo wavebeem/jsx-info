@@ -40,7 +40,6 @@ function createComponent(componentNode) {
  * @property {string[]} onlyComponents feedback for only these components
  * @property {(component:string) => void} onComponent called when a component was found
  * @property {(component:string, prop:string) => void} onProp called when a component prop was found
- * @property {(component:string, child:string) => void} onChild called when a component child was found
  */
 
 /**
@@ -53,7 +52,6 @@ function parse(code, options = {}) {
     babelPlugins = [],
     onlyComponents = [],
     onComponent = () => {},
-    onChild = () => {},
     onProp = () => {}
   } = options;
 
@@ -88,18 +86,6 @@ function parse(code, options = {}) {
         // Attributes
         for (const propNode of node.openingElement.attributes) {
           onProp(component, createProp(propNode));
-        }
-      }
-
-      // Parent
-      const closestParentPath = path.findParent(
-        path => path.node.type === "JSXElement"
-      );
-
-      if (closestParentPath) {
-        const parentComponent = createComponent(closestParentPath.node);
-        if (doReportComponent(parentComponent)) {
-          onChild(parentComponent, component);
         }
       }
     }

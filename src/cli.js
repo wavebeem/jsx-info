@@ -45,7 +45,7 @@ program
     "usage"
   )
   .option(
-    "--report <usage|props|children>",
+    "--report <usage|props>",
     "specify reports to show (can be repeted)",
     listOption
   )
