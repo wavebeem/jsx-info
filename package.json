@@ -29,7 +29,8 @@
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
     "globby": "^8.0.1",
-    "log-update": "^2.3.0"
+    "log-update": "^2.3.0",
+    "ora": "^3.4.0"
   },
   "devDependencies": {
     "eslint": "^5.11.1",

@@ -1,10 +1,10 @@
 const globby = require("globby");
 const fs = require("fs");
 
-exports.codeFromFile = filename => fs.readFileSync(filename, "utf8");
+const codeFromFile = filename => fs.readFileSync(filename, "utf8");
 
-exports.searchForFiles = ({ patterns, gitignore, directory, ignore }) => {
-  return globby.sync(patterns, {
+const searchForFiles = async ({ patterns, gitignore, directory, ignore }) => {
+  return await globby(patterns, {
     absolute: true,
     onlyFiles: true,
     gitignore,
@@ -12,3 +12,6 @@ exports.searchForFiles = ({ patterns, gitignore, directory, ignore }) => {
     cwd: directory || process.cwd()
   });
 };
+
+exports.codeFromFile = codeFromFile;
+exports.searchForFiles = searchForFiles;

@@ -1,23 +1,12 @@
 const printer = require("./printer");
 
 class Reporter {
-  /**
-   * @param {'alphabatical' | 'usage'} sortType
-   */
-  constructor(sortType) {
+  constructor({ sortType }) {
     this._sortType = sortType;
     this._errors = new Map();
     this._suggestedPlugins = new Set();
     this._components = new Map();
     this._componentProps = new Map();
-
-    // bindings
-    this.addParseError = this.addParseError.bind(this);
-    this.addComponent = this.addComponent.bind(this);
-    this.addProp = this.addProp.bind(this);
-    this.reportComponentUsage = this.reportComponentUsage.bind(this);
-    this.reportPropUsage = this.reportPropUsage.bind(this);
-    this.reportErrors = this.reportErrors.bind(this);
   }
 
   _sumValues(map) {
@@ -63,22 +52,18 @@ class Reporter {
     const errorsCount = this._errors.size;
     if (errorsCount) {
       printer.print(
-        "" + errorsCount,
+        "\n" + errorsCount,
         "parse",
         errorsCount === 1 ? "error" : "errors"
       );
-
       for (const [filename, error] of this._errors) {
-        const {
-          loc: { line, column },
-          message
-        } = error;
+        const { loc, message } = error;
+        const { line, column } = loc;
         printer.print(
           `  ${filename}:${line}:${column}`,
           printer.styleError(message)
         );
       }
-
       if (this._suggestedPlugins.size) {
         printer.print("Try adding at least one of the following options:");
         for (const plugin of this._suggestedPlugins) {
@@ -97,15 +82,11 @@ class Reporter {
         `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
       )
     );
-    const textMeter = printer.createTextMeter(totalComponentUsageCount);
     for (const [componentName, count] of this._sortMap(this._components)) {
       printer.print(
-        "",
-        printer.styleNumber(count.toString().padStart(3)),
-        "",
-        textMeter(count),
-        "",
-        componentName
+        "  " + printer.styleNumber(count.toString().padStart(3)),
+        "  " + printer.textMeter(totalComponentUsageCount, count),
+        "  " + printer.styleComponentName(componentName)
       );
     }
   }
@@ -123,15 +104,12 @@ class Reporter {
         )
       );
 
-      const textMeter = printer.createTextMeter(this._sumValues(props));
+      const total = this._sumValues(props);
       for (const [propName, count] of this._sortMap(props)) {
         printer.print(
-          "",
-          printer.styleNumber(count.toString().padStart(3)),
-          "",
-          textMeter(count),
-          "",
-          printer.stylePropName(propName)
+          "  " + printer.styleNumber(count.toString().padStart(3)),
+          "  " + printer.textMeter(total, count),
+          "  " + printer.stylePropName(propName)
         );
       }
     }
