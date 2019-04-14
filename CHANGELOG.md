@@ -1,3 +1,9 @@
+# v1.3.0
+
+- Adds `--report <...>` flag
+- Adds `--sort <...>` flag
+- Improves loading spinner
+
 # v1.2.3
 
 - Fixes crash if there were no `--add-babel-plugin` flags
