@@ -1,5 +1,5 @@
 const chalk = require("chalk");
-const logUpdate = require("log-update");
+const ora = require("ora");
 
 const styleComponentName = componentName => {
   return chalk.bold("<" + componentName + ">");
@@ -37,39 +37,7 @@ const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
-class Spinner {
-  constructor() {
-    this.speed = 100;
-    this.time = Date.now();
-    this.frame = "▒▓▒░░░░";
-  }
-
-  toString() {
-    const time = Date.now();
-    const dt = time - this.time;
-    if (dt > this.speed) {
-      this.time = time;
-      this.frame = this.frame.slice(-1) + this.frame.slice(0, -1);
-    }
-    return this.frame;
-  }
-}
-
-const spinner = new Spinner();
-const progressLogger = logUpdate.create(process.stderr, {
-  showCursor: true
-});
-const clearProgress = () => {
-  progressLogger.clear();
-};
-
-const printProgress = () => {
-  progressLogger(styleHeading("Finding files"));
-};
-
-const printScanningFile = filename => {
-  progressLogger(styleHeading("Scanning files ", spinner), filename, `\n`);
-};
+const spinner = ora("Finding files");
 
 // eslint-disable-next-line no-console
 const print = console.log.bind(console);
@@ -80,7 +48,5 @@ exports.styleError = styleError;
 exports.styleNumber = styleNumber;
 exports.textMeter = textMeter;
 exports.styleHeading = styleHeading;
-exports.clearProgress = clearProgress;
-exports.printProgress = printProgress;
-exports.printScanningFile = printScanningFile;
+exports.spinner = spinner;
 exports.print = print;

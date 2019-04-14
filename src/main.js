@@ -9,48 +9,60 @@ const {
   babelPlugins,
   ignore
 } = require("./cli");
+const sleep = require("./sleep");
 const parse = require("./parse");
 const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
 
-if (showProgress) {
-  printer.printProgress();
-}
-const filenames = codeSource.searchForFiles({
-  patterns: files,
-  gitignore,
-  directory,
-  ignore
-});
-const reporter = new Reporter({ sortType: sort });
-for (const filename of filenames) {
+async function main() {
   if (showProgress) {
-    printer.printScanningFile(filename);
+    printer.spinner.start();
   }
-  try {
-    parse(codeSource.codeFromFile(filename), {
-      babelPlugins,
-      typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
-      onlyComponents: components,
-      onComponent: component => reporter.addComponent(component),
-      onProp: (component, prop) => reporter.addProp(component, prop)
-    });
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      reporter.addParseError(filename, error);
-    } else {
-      throw error;
+  const filenames = await codeSource.searchForFiles({
+    patterns: files,
+    gitignore,
+    directory,
+    ignore
+  });
+  const reporter = new Reporter({ sortType: sort });
+  for (const filename of filenames) {
+    if (showProgress) {
+      printer.spinner.text = `Scanning ${filename}`;
+      // We need to sleep briefly here since parse isn't asnyc and the `ora`
+      // spinner library assumes the event loop will be ticking periodically
+      await sleep(20);
+    }
+    try {
+      parse(codeSource.codeFromFile(filename), {
+        babelPlugins,
+        typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
+        onlyComponents: components,
+        onComponent: component => reporter.addComponent(component),
+        onProp: (component, prop) => reporter.addProp(component, prop)
+      });
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        reporter.addParseError(filename, error);
+      } else {
+        throw error;
+      }
     }
   }
+  if (showProgress) {
+    printer.spinner.stop();
+  }
+  if (report.includes("usage")) {
+    reporter.reportComponentUsage();
+  }
+  if (report.includes("props")) {
+    reporter.reportPropUsage();
+  }
+  reporter.reportErrors();
 }
-if (showProgress) {
-  printer.clearProgress();
-}
-if (report.includes("usage")) {
-  reporter.reportComponentUsage();
-}
-if (report.includes("props")) {
-  reporter.reportPropUsage();
-}
-reporter.reportErrors();
+
+main().catch(err => {
+  // eslint-disable-next-line no-console
+  console.error(err);
+  process.exit(1);
+});
