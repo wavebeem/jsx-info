@@ -23,7 +23,7 @@ const filenames = codeSource.searchForFiles({
   directory,
   ignore
 });
-const reporter = new Reporter(sort);
+const reporter = new Reporter({ sortType: sort });
 for (const filename of filenames) {
   if (showProgress) {
     printer.printScanningFile(filename);

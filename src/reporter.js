@@ -1,10 +1,7 @@
 const printer = require("./printer");
 
 class Reporter {
-  /**
-   * @param {'alphabatical' | 'usage'} sortType
-   */
-  constructor(sortType) {
+  constructor({ sortType }) {
     this._sortType = sortType;
     this._errors = new Map();
     this._suggestedPlugins = new Set();
