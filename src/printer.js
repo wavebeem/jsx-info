@@ -37,7 +37,7 @@ const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
-const spinner = ora("Finding files");
+const spinner = ora();
 
 // eslint-disable-next-line no-console
 const print = console.log.bind(console);

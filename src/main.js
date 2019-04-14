@@ -17,6 +17,7 @@ const codeSource = require("./code-source");
 
 async function main() {
   if (showProgress) {
+    printer.spinner.text = "Finding files";
     printer.spinner.start();
   }
   const filenames = await codeSource.searchForFiles({
@@ -28,7 +29,7 @@ async function main() {
   const reporter = new Reporter({ sortType: sort });
   for (const filename of filenames) {
     if (showProgress) {
-      printer.spinner.text = `Scanning ${filename}`;
+      printer.spinner.text = `Scanning files\n\n${filename}`;
       // We need to sleep briefly here since parse isn't asnyc and the `ora`
       // spinner library assumes the event loop will be ticking periodically
       await sleep(20);
