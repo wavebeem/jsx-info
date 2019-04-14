@@ -31,6 +31,7 @@ for (const filename of filenames) {
   try {
     parse(codeSource.codeFromFile(filename), {
       babelPlugins,
+      typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
       onlyComponents: components,
       onComponent: component => reporter.addComponent(component),
       onProp: (component, prop) => reporter.addProp(component, prop)
