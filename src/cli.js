@@ -1,4 +1,5 @@
 const program = require("commander");
+
 const pkg = require("../package.json");
 
 function listOption(x, acc = []) {
@@ -20,33 +21,32 @@ program
   .option("--no-color", "force disable color")
   .option("--no-gitignore", "disable reading .gitignore files")
   .option(
-    "--add-babel-plugin <plugin>",
+    "--add-babel-plugin <PLUGIN>",
     "adds a babel plugin (repeatable)",
     listOption
   )
   .option(
-    "--directory <directory>",
+    "--directory <DIRECTORY>",
     "directory to use as the base for finding files instead of cwd"
   )
   .option(
-    "--ignore <pattern>",
+    "--ignore <PATTERN>",
     "adds a glob pattern used to ignore input files (repeatable)",
     listOption
   )
   .option(
-    "--files <pattern>",
+    "--files <PATTERN>",
     "glob pattern used to find input files",
     "**/*.{js,jsx,tsx}"
   )
   .option(
     "--sort <alphabetical|usage>",
     "specify sort type of the report",
-    /^(alphabetical|usage)$/i,
-    "usage"
+    /^(alphabetical|usage)$/i
   )
   .option(
     "--report <usage|props>",
-    "specify reports to show (can be repeted)",
+    "specify reports to show (repeatable)",
     listOption
   )
   .parse(process.argv);
@@ -79,11 +79,11 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 module.exports = {
   components: program.args,
   showProgress: program.progress,
-  babelPlugins: program.addBabelPlugin || [process.cwd()],
+  babelPlugins: program.addBabelPlugin,
   directory: program.directory,
   gitignore: program.gitignore,
   ignore: program.ignore || [],
   files: program.files,
-  sort: program.sort,
+  sort: program.sort || "usage",
   report: program.report || []
 };

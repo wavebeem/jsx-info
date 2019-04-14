@@ -78,11 +78,9 @@ function parse(code, options = {}) {
     JSXElement(path) {
       const node = path.node;
       const component = createComponent(node);
-
       if (doReportComponent(component)) {
         // Component
         onComponent(component);
-
         // Attributes
         for (const propNode of node.openingElement.attributes) {
           onProp(component, createProp(propNode));

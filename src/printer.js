@@ -1,23 +1,23 @@
 const chalk = require("chalk");
 const logUpdate = require("log-update");
 
-exports.styleComponentName = componentName => {
+const styleComponentName = componentName => {
   return chalk.bold.cyan("<" + componentName + ">");
 };
 
-exports.stylePropName = propName => {
+const stylePropName = propName => {
   return chalk.bold(propName);
 };
 
-exports.styleNumber = number => {
+const styleNumber = number => {
   return chalk.bold(number);
 };
 
-exports.styleError = errorMessage => {
+const styleError = errorMessage => {
   return chalk.bold.red(errorMessage);
 };
 
-exports.createTextMeter = total => {
+const createTextMeter = total => {
   return function(count) {
     const CHAR_BOX_FULL = chalk.bold.green("*");
     const CHAR_BOX_LIGHT = chalk.bold.red("-");
@@ -35,7 +35,7 @@ exports.createTextMeter = total => {
   };
 };
 
-exports.styleHeading = (...args) => {
+const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
@@ -61,21 +61,28 @@ const spinner = new Spinner();
 const progressLogger = logUpdate.create(process.stderr, {
   showCursor: true
 });
-exports.clearProgress = () => {
+const clearProgress = () => {
   progressLogger.clear();
 };
 
-exports.printProgress = () => {
-  progressLogger(exports.styleHeading("Finding files"));
+const printProgress = () => {
+  progressLogger(styleHeading("Finding files"));
 };
 
-exports.printScanningFile = filename => {
-  progressLogger(
-    exports.styleHeading("Scanning files ", spinner),
-    filename,
-    `\n`
-  );
+const printScanningFile = filename => {
+  progressLogger(styleHeading("Scanning files ", spinner), filename, `\n`);
 };
 
 // eslint-disable-next-line no-console
-exports.print = console.log.bind(console);
+const print = console.log.bind(console);
+
+exports.styleComponentName = styleComponentName;
+exports.stylePropName = stylePropName;
+exports.styleError = styleError;
+exports.styleNumber = styleNumber;
+exports.createTextMeter = createTextMeter;
+exports.styleHeading = styleHeading;
+exports.clearProgress = clearProgress;
+exports.printProgress = printProgress;
+exports.printScanningFile = printScanningFile;
+exports.print = print;
