@@ -56,18 +56,14 @@ class Reporter {
         "parse",
         errorsCount === 1 ? "error" : "errors"
       );
-
       for (const [filename, error] of this._errors) {
-        const {
-          loc: { line, column },
-          message
-        } = error;
+        const { loc, message } = error;
+        const { line, column } = loc;
         printer.print(
           `  ${filename}:${line}:${column}`,
           printer.styleError(message)
         );
       }
-
       if (this._suggestedPlugins.size) {
         printer.print("Try adding at least one of the following options:");
         for (const plugin of this._suggestedPlugins) {
@@ -88,12 +84,9 @@ class Reporter {
     );
     for (const [componentName, count] of this._sortMap(this._components)) {
       printer.print(
-        "",
-        printer.styleNumber(count.toString().padStart(3)),
-        "",
-        printer.textMeter(totalComponentUsageCount, count),
-        "",
-        printer.styleComponentName(componentName)
+        "  " + printer.styleNumber(count.toString().padStart(3)),
+        "  " + printer.textMeter(totalComponentUsageCount, count),
+        "  " + printer.styleComponentName(componentName)
       );
     }
   }
@@ -114,12 +107,9 @@ class Reporter {
       const total = this._sumValues(props);
       for (const [propName, count] of this._sortMap(props)) {
         printer.print(
-          "",
-          printer.styleNumber(count.toString().padStart(3)),
-          "",
-          printer.textMeter(total, count),
-          "",
-          printer.stylePropName(propName)
+          "  " + printer.styleNumber(count.toString().padStart(3)),
+          "  " + printer.textMeter(total, count),
+          "  " + printer.stylePropName(propName)
         );
       }
     }
