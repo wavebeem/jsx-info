@@ -48,8 +48,7 @@ program
     "--report <usage|props>",
     "specify reports to show (repeatable)",
     listOption
-  )
-  .parse(process.argv);
+  );
 
 program.on("--help", () => {
   // eslint-disable-next-line no-console
@@ -60,7 +59,6 @@ Examples:
 
   # Display info only for <div> and <Tab.Container>
   $ ${pkg.name} div Tab.Container
-
 
   # Ignore any folder named at any depth named \`__test__\`,
   # as well as \`packages/legacy\`
@@ -75,6 +73,8 @@ Examples:
 Documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
+
+program.parse(process.argv);
 
 exports.components = program.args;
 exports.showProgress = program.progress;
