@@ -1,81 +1,52 @@
 const chalk = require("chalk");
-const logUpdate = require("log-update");
+const ora = require("ora");
 
-exports.styleComponentName = componentName => {
-  return chalk.bold.cyan("<" + componentName + ">");
+const styleComponentName = componentName => {
+  return chalk.bold("<" + componentName + ">");
 };
 
-exports.stylePropName = propName => {
+const stylePropName = propName => {
   return chalk.bold(propName);
 };
 
-exports.styleNumber = number => {
+const styleNumber = number => {
   return chalk.bold(number);
 };
 
-exports.styleError = errorMessage => {
+const styleError = errorMessage => {
   return chalk.bold.red(errorMessage);
 };
 
-exports.createTextMeter = total => {
-  return function(count) {
-    const CHAR_BOX_FULL = chalk.bold.green("*");
-    const CHAR_BOX_LIGHT = chalk.bold.red("-");
-    const size = 10;
-    let str = "";
-    let first = Math.ceil((count / total) * size);
-    let rest = size - first;
-    while (first-- > 0) {
-      str += CHAR_BOX_FULL;
-    }
-    while (rest-- > 0) {
-      str += CHAR_BOX_LIGHT;
-    }
-    return str;
-  };
+const textMeter = (total, count) => {
+  const CHAR_BOX_FULL = chalk.bold.green("*");
+  const CHAR_BOX_LIGHT = chalk.bold.red("-");
+  const size = 10;
+  let str = "";
+  let first = Math.ceil((count / total) * size);
+  let rest = size - first;
+  while (first-- > 0) {
+    str += CHAR_BOX_FULL;
+  }
+  while (rest-- > 0) {
+    str += CHAR_BOX_LIGHT;
+  }
+  return str;
 };
 
-exports.styleHeading = (...args) => {
+const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
-class Spinner {
-  constructor() {
-    this.speed = 100;
-    this.time = Date.now();
-    this.frame = "▒▓▒░░░░";
-  }
-
-  toString() {
-    const time = Date.now();
-    const dt = time - this.time;
-    if (dt > this.speed) {
-      this.time = time;
-      this.frame = this.frame.slice(-1) + this.frame.slice(0, -1);
-    }
-    return this.frame;
-  }
-}
-
-const spinner = new Spinner();
-const progressLogger = logUpdate.create(process.stderr, {
-  showCursor: true
-});
-exports.clearProgress = () => {
-  progressLogger.clear();
-};
-
-exports.printProgress = () => {
-  progressLogger(exports.styleHeading("Finding files"));
-};
-
-exports.printScanningFile = filename => {
-  progressLogger(
-    exports.styleHeading("Scanning files ", spinner),
-    filename,
-    `\n`
-  );
-};
+const spinner = ora();
 
 // eslint-disable-next-line no-console
-exports.print = console.log.bind(console);
+const print = console.log.bind(console);
+
+exports.styleComponentName = styleComponentName;
+exports.stylePropName = stylePropName;
+exports.styleError = styleError;
+exports.styleNumber = styleNumber;
+exports.textMeter = textMeter;
+exports.styleHeading = styleHeading;
+exports.spinner = spinner;
+exports.print = print;
