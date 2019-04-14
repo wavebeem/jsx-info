@@ -12,7 +12,6 @@ function createProp(attributeNode) {
         throw new Error(`unexpected node type: ${attributeNode.type}`);
     }
   }
-
   return getAttributeName(attributeNode);
 }
 
@@ -29,7 +28,6 @@ function createComponent(componentNode) {
         throw new Error(`unexpected node type: ${nameNode.type}`);
     }
   }
-
   return getDottedName(componentNode.openingElement.name);
 }
 
@@ -54,12 +52,10 @@ function parse(code, options = {}) {
     onComponent = () => {},
     onProp = () => {}
   } = options;
-
   function doReportComponent(component) {
     if (onlyComponents.length === 0) return true;
     return onlyComponents.indexOf(component) !== -1;
   }
-  // Generate AST
   const ast = parser.parse(code, {
     sourceType: "unambiguous",
     allowReturnOutsideFunction: true,
@@ -72,16 +68,12 @@ function parse(code, options = {}) {
       ...babelPlugins
     ]
   });
-
-  // Traverse
   traverse(ast, {
     JSXElement(path) {
       const node = path.node;
       const component = createComponent(node);
       if (doReportComponent(component)) {
-        // Component
         onComponent(component);
-        // Attributes
         for (const propNode of node.openingElement.attributes) {
           onProp(component, createProp(propNode));
         }

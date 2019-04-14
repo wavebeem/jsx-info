@@ -9,7 +9,7 @@ const {
   babelPlugins,
   ignore
 } = require("./cli");
-const parse = require("./parser");
+const parse = require("./parse");
 const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
@@ -23,7 +23,6 @@ const filenames = codeSource.searchForFiles({
   directory,
   ignore
 });
-
 const reporter = new Reporter(sort);
 for (const filename of filenames) {
   if (showProgress) {
@@ -33,8 +32,8 @@ for (const filename of filenames) {
     parse(codeSource.codeFromFile(filename), {
       babelPlugins,
       onlyComponents: components,
-      onComponent: reporter.addComponent,
-      onProp: reporter.addProp
+      onComponent: component => reporter.addComponent(component),
+      onProp: (component, prop) => reporter.addProp(component, prop)
     });
   } catch (error) {
     if (error instanceof SyntaxError) {
@@ -44,17 +43,13 @@ for (const filename of filenames) {
     }
   }
 }
-
-printer.clearProgress();
-if (!report.length) {
+if (showProgress) {
+  printer.clearProgress();
+}
+if (report.includes("usage")) {
   reporter.reportComponentUsage();
+}
+if (report.includes("props")) {
   reporter.reportPropUsage();
-} else {
-  if (report.includes("usage")) {
-    reporter.reportComponentUsage();
-  }
-  if (report.includes("props")) {
-    reporter.reportPropUsage();
-  }
 }
 reporter.reportErrors();

@@ -2,7 +2,7 @@ const chalk = require("chalk");
 const logUpdate = require("log-update");
 
 const styleComponentName = componentName => {
-  return chalk.bold.cyan("<" + componentName + ">");
+  return chalk.bold("<" + componentName + ">");
 };
 
 const stylePropName = propName => {
@@ -17,22 +17,20 @@ const styleError = errorMessage => {
   return chalk.bold.red(errorMessage);
 };
 
-const createTextMeter = total => {
-  return function(count) {
-    const CHAR_BOX_FULL = chalk.bold.green("*");
-    const CHAR_BOX_LIGHT = chalk.bold.red("-");
-    const size = 10;
-    let str = "";
-    let first = Math.ceil((count / total) * size);
-    let rest = size - first;
-    while (first-- > 0) {
-      str += CHAR_BOX_FULL;
-    }
-    while (rest-- > 0) {
-      str += CHAR_BOX_LIGHT;
-    }
-    return str;
-  };
+const textMeter = (total, count) => {
+  const CHAR_BOX_FULL = chalk.bold.green("*");
+  const CHAR_BOX_LIGHT = chalk.bold.red("-");
+  const size = 10;
+  let str = "";
+  let first = Math.ceil((count / total) * size);
+  let rest = size - first;
+  while (first-- > 0) {
+    str += CHAR_BOX_FULL;
+  }
+  while (rest-- > 0) {
+    str += CHAR_BOX_LIGHT;
+  }
+  return str;
 };
 
 const styleHeading = (...args) => {
@@ -80,7 +78,7 @@ exports.styleComponentName = styleComponentName;
 exports.stylePropName = stylePropName;
 exports.styleError = styleError;
 exports.styleNumber = styleNumber;
-exports.createTextMeter = createTextMeter;
+exports.textMeter = textMeter;
 exports.styleHeading = styleHeading;
 exports.clearProgress = clearProgress;
 exports.printProgress = printProgress;

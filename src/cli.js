@@ -76,14 +76,12 @@ Documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
 
-module.exports = {
-  components: program.args,
-  showProgress: program.progress,
-  babelPlugins: program.addBabelPlugin,
-  directory: program.directory,
-  gitignore: program.gitignore,
-  ignore: program.ignore || [],
-  files: program.files,
-  sort: program.sort || "usage",
-  report: program.report || []
-};
+exports.components = program.args;
+exports.showProgress = program.progress;
+exports.babelPlugins = program.addBabelPlugin;
+exports.directory = program.directory;
+exports.gitignore = program.gitignore;
+exports.ignore = program.ignore || [];
+exports.files = program.files;
+exports.sort = program.sort || "usage";
+exports.report = program.report || ["usage", "props"];

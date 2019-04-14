@@ -10,14 +10,6 @@ class Reporter {
     this._suggestedPlugins = new Set();
     this._components = new Map();
     this._componentProps = new Map();
-
-    // bindings
-    this.addParseError = this.addParseError.bind(this);
-    this.addComponent = this.addComponent.bind(this);
-    this.addProp = this.addProp.bind(this);
-    this.reportComponentUsage = this.reportComponentUsage.bind(this);
-    this.reportPropUsage = this.reportPropUsage.bind(this);
-    this.reportErrors = this.reportErrors.bind(this);
   }
 
   _sumValues(map) {
@@ -63,7 +55,7 @@ class Reporter {
     const errorsCount = this._errors.size;
     if (errorsCount) {
       printer.print(
-        "" + errorsCount,
+        "\n" + errorsCount,
         "parse",
         errorsCount === 1 ? "error" : "errors"
       );
@@ -97,15 +89,14 @@ class Reporter {
         `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
       )
     );
-    const textMeter = printer.createTextMeter(totalComponentUsageCount);
     for (const [componentName, count] of this._sortMap(this._components)) {
       printer.print(
         "",
         printer.styleNumber(count.toString().padStart(3)),
         "",
-        textMeter(count),
+        printer.textMeter(totalComponentUsageCount, count),
         "",
-        componentName
+        printer.styleComponentName(componentName)
       );
     }
   }
@@ -123,13 +114,13 @@ class Reporter {
         )
       );
 
-      const textMeter = printer.createTextMeter(this._sumValues(props));
+      const total = this._sumValues(props);
       for (const [propName, count] of this._sortMap(props)) {
         printer.print(
           "",
           printer.styleNumber(count.toString().padStart(3)),
           "",
-          textMeter(count),
+          printer.textMeter(total, count),
           "",
           printer.stylePropName(propName)
         );
