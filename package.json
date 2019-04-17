@@ -7,7 +7,7 @@
     "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
     "start": "node src/jsx-info.js",
-    "upgrade": "npm-check -u",
+    "upgrade": "npm-check --update",
     "test": "eslint src && prettier --list-different \"src/**/*.js\""
   },
   "repository": {
@@ -29,7 +29,7 @@
     "@babel/traverse": "^7.4.3",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
-    "globby": "^8.0.1",
+    "globby": "^9.2.0",
     "ora": "^3.4.0"
   },
   "devDependencies": {
