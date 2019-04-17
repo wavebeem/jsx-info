@@ -7,6 +7,7 @@
     "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
     "start": "node src/jsx-info.js",
+    "upgrade": "npm-check -u",
     "test": "eslint src && prettier --list-different \"src/**/*.js\""
   },
   "repository": {
@@ -24,16 +25,16 @@
   "author": "Brian Mock <brian@mockbrian.com>",
   "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.2.3",
-    "@babel/traverse": "^7.2.3",
-    "chalk": "^2.4.1",
-    "commander": "^2.19.0",
+    "@babel/parser": "^7.4.3",
+    "@babel/traverse": "^7.4.3",
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
     "globby": "^8.0.1",
-    "log-update": "^2.3.0",
     "ora": "^3.4.0"
   },
   "devDependencies": {
-    "eslint": "^5.11.1",
-    "prettier": "1.15.3"
+    "eslint": "^5.16.0",
+    "npm-check": "^5.9.0",
+    "prettier": "^1.17.0"
   }
 }
