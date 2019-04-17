@@ -1,3 +1,8 @@
+# v1.4.0
+
+- Fixes number alignment for 4+ digit numbers
+- Shows the number of files scanned, and how long it took
+
 # v1.3.0
 
 - Adds `--report <...>` flag
