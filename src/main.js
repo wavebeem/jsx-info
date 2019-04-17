@@ -16,6 +16,7 @@ const printer = require("./printer");
 const codeSource = require("./code-source");
 
 async function main() {
+  const timeStart = Date.now();
   if (showProgress) {
     printer.spinner.text = "Finding files";
     printer.spinner.start();
@@ -32,7 +33,7 @@ async function main() {
       printer.spinner.text = `Scanning files\n\n${filename}`;
       // We need to sleep briefly here since parse isn't asnyc and the `ora`
       // spinner library assumes the event loop will be ticking periodically
-      await sleep(20);
+      await sleep(0);
     }
     try {
       parse(codeSource.codeFromFile(filename), {
@@ -53,6 +54,12 @@ async function main() {
   if (showProgress) {
     printer.spinner.stop();
   }
+  const totalTime = (Date.now() - timeStart) / 1000;
+  printer.print(
+    printer.styleHeading(
+      `Scanned ${filenames.length} files in ${totalTime.toFixed(1)} seconds`
+    )
+  );
   if (report.includes("usage")) {
     reporter.reportComponentUsage();
   }

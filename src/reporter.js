@@ -1,5 +1,9 @@
 const printer = require("./printer");
 
+function getMaxDigits(iterable) {
+  return Math.max(...[...iterable].map(n => n.toString().length));
+}
+
 class Reporter {
   constructor({ sortType }) {
     this._sortType = sortType;
@@ -82,9 +86,11 @@ class Reporter {
         `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
       )
     );
-    for (const [componentName, count] of this._sortMap(this._components)) {
+    const pairs = this._sortMap(this._components);
+    const maxDigits = getMaxDigits(pairs.values());
+    for (const [componentName, count] of pairs) {
       printer.print(
-        "  " + printer.styleNumber(count.toString().padStart(3)),
+        "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
         "  " + printer.textMeter(totalComponentUsageCount, count),
         "  " + printer.styleComponentName(componentName)
       );
@@ -105,9 +111,11 @@ class Reporter {
       );
 
       const total = this._sumValues(props);
-      for (const [propName, count] of this._sortMap(props)) {
+      const pairs = this._sortMap(props);
+      const maxDigits = getMaxDigits(pairs.values());
+      for (const [propName, count] of pairs) {
         printer.print(
-          "  " + printer.styleNumber(count.toString().padStart(3)),
+          "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
           "  " + printer.textMeter(total, count),
           "  " + printer.stylePropName(propName)
         );
