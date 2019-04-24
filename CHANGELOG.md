@@ -1,3 +1,10 @@
+# v1.5.0
+
+- Prop usage graphs are now relative to the number of component usages, rather
+  than relative to the number of total props used across all component usages.
+  This means that a "full" prop bar corresponds to a prop used in every usage of
+  that component.
+
 # v1.4.0
 
 - Fixes number alignment for 4+ digit numbers

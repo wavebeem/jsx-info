@@ -109,14 +109,12 @@ class Reporter {
           } with the following prop usage:`
         )
       );
-
-      const total = this._sumValues(props);
       const pairs = this._sortMap(props);
       const maxDigits = getMaxDigits(pairs.values());
       for (const [propName, count] of pairs) {
         printer.print(
           "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
-          "  " + printer.textMeter(total, count),
+          "  " + printer.textMeter(componentUsage, count),
           "  " + printer.stylePropName(propName)
         );
       }
