@@ -29,6 +29,7 @@
     "@babel/traverse": "^7.4.3",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
+    "cosmiconfig": "^5.2.1",
     "globby": "^9.2.0",
     "ora": "^3.4.0"
   },

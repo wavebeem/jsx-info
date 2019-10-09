@@ -1,6 +1,23 @@
 const program = require("commander");
+const cosmiconfig = require("cosmiconfig");
 
 const pkg = require("../package.json");
+
+const explorer = cosmiconfig("jsx-info", {
+  // TODO: Don't load YAML or JS files
+});
+try {
+  const result = explorer.searchSync();
+  console.log(result);
+  if (result) {
+    console.log("Loaded configuration from", result.filepath);
+    // TODO: result.config
+  } else {
+    // TODO: Defaults
+  }
+} catch (err) {
+  // TODO: Report config file parse error
+}
 
 function listOption(x, acc = []) {
   acc.push(x);
