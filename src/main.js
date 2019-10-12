@@ -9,11 +9,16 @@ const {
   babelPlugins,
   ignore
 } = require("./cli");
-const sleep = require("./sleep");
 const parse = require("./parse");
 const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
+
+async function sleep() {
+  return new Promise(resolve => {
+    setImmediate(resolve);
+  });
+}
 
 async function main() {
   const timeStart = Date.now();
@@ -56,9 +61,7 @@ async function main() {
   }
   const totalTime = (Date.now() - timeStart) / 1000;
   printer.print(
-    printer.styleHeading(
-      `Scanned ${filenames.length} files in ${totalTime.toFixed(1)} seconds`
-    )
+    `Scanned ${filenames.length} files in ${totalTime.toFixed(1)} seconds`
   );
   if (report.includes("usage")) {
     reporter.reportComponentUsage();

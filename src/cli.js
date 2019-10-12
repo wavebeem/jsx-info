@@ -88,7 +88,7 @@ function getConfig() {
     });
     const result = explorer.searchSync();
     if (result) {
-      print(styleHeading(`Loaded configuration from ${result.filepath}`));
+      print(`Loaded configuration from ${result.filepath}\n`);
       return result.config;
     }
   } catch (err) {
