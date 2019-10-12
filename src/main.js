@@ -33,7 +33,7 @@ async function main() {
       printer.spinner.text = `Scanning files\n\n${filename}`;
       // We need to sleep briefly here since parse isn't asnyc and the `ora`
       // spinner library assumes the event loop will be ticking periodically
-      await sleep(0);
+      await sleep();
     }
     try {
       parse(codeSource.codeFromFile(filename), {

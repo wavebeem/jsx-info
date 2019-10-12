@@ -1,6 +1,6 @@
-async function sleep(ms) {
+async function sleep() {
   return new Promise(resolve => {
-    setTimeout(resolve, ms);
+    setImmediate(resolve);
   });
 }
 

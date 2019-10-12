@@ -2,6 +2,7 @@ const program = require("commander");
 const cosmiconfig = require("cosmiconfig");
 
 const pkg = require("../package.json");
+const { print, printError, styleHeading } = require("./printer");
 
 function listOption(x, acc = []) {
   acc.push(x);
@@ -53,8 +54,7 @@ program
   );
 
 program.on("--help", () => {
-  // eslint-disable-next-line no-console
-  console.log(`
+  print(`
 Examples:
   # Display info for every component
   $ ${pkg.name}
@@ -88,13 +88,11 @@ function getConfig() {
     });
     const result = explorer.searchSync();
     if (result) {
-      // eslint-disable-next-line no-console
-      console.log("Loaded configuration from", result.filepath);
+      print(styleHeading(`Loaded configuration from ${result.filepath}`));
       return result.config;
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("failed to parse config file");
+    printError("failed to parse config file");
   }
   return {};
 }
