@@ -4,7 +4,7 @@ const fs = require("fs");
 const codeFromFile = filename => fs.readFileSync(filename, "utf8");
 
 const searchForFiles = async ({ patterns, gitignore, directory, ignore }) => {
-  return await globby(patterns, {
+  return await globby(patterns || "**/*.{js,jsx,tsx}", {
     absolute: true,
     onlyFiles: true,
     gitignore,

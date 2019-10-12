@@ -42,6 +42,9 @@ const spinner = ora();
 // eslint-disable-next-line no-console
 const print = console.log.bind(console);
 
+// eslint-disable-next-line no-console
+const printError = console.error.bind(console);
+
 exports.styleComponentName = styleComponentName;
 exports.stylePropName = stylePropName;
 exports.styleError = styleError;
@@ -50,3 +53,4 @@ exports.textMeter = textMeter;
 exports.styleHeading = styleHeading;
 exports.spinner = spinner;
 exports.print = print;
+exports.printError = printError;
