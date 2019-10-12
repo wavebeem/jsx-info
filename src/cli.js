@@ -3,22 +3,6 @@ const cosmiconfig = require("cosmiconfig");
 
 const pkg = require("../package.json");
 
-const explorer = cosmiconfig("jsx-info", {
-  // TODO: Don't load YAML or JS files
-});
-try {
-  const result = explorer.searchSync();
-  console.log(result);
-  if (result) {
-    console.log("Loaded configuration from", result.filepath);
-    // TODO: result.config
-  } else {
-    // TODO: Defaults
-  }
-} catch (err) {
-  // TODO: Report config file parse error
-}
-
 function listOption(x, acc = []) {
   acc.push(x);
   return acc;
@@ -36,6 +20,7 @@ program
   // https://github.com/tj/commander.js/issues/108
   .option("--color", "force enable color")
   .option("--no-color", "force disable color")
+  .option("--no-config", "disable config file")
   .option("--no-gitignore", "disable reading .gitignore files")
   .option(
     "--add-babel-plugin <PLUGIN>",
@@ -87,18 +72,44 @@ Examples:
     pkg.name
   } --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
 
-Documentation can be found at https://github.com/wavebeem/jsx-info
+Full documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
 
 program.parse(process.argv);
 
+function getConfig() {
+  if (!program.config) {
+    return {};
+  }
+  try {
+    const explorer = cosmiconfig("jsx-info", {
+      searchPlaces: ["package.json", ".jsx-info.json"]
+    });
+    const result = explorer.searchSync();
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log("Loaded configuration from", result.filepath);
+      return result.config;
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("failed to parse config file");
+  }
+  return {};
+}
+
+const config = getConfig();
+
 exports.components = program.args;
 exports.showProgress = program.progress;
-exports.babelPlugins = program.addBabelPlugin;
-exports.directory = program.directory;
+exports.babelPlugins = [
+  ...(config.babelPlugins || []),
+  ...(program.addBabelPlugin || [])
+];
+exports.directory = program.directory || config.directory;
 exports.gitignore = program.gitignore;
-exports.ignore = program.ignore || [];
-exports.files = program.files;
+exports.ignore = [...(program.ignore || []), ...(config.ignore || [])];
+exports.files = program.files || config.files;
 exports.sort = program.sort || "usage";
 exports.report = program.report || ["usage", "props"];

@@ -49,6 +49,25 @@ a different directory like this:
 
     $ npx jsx-info --directory app/src
 
+## Configuration
+
+In order to avoid repeating command line arguments as often, `jsx-info` supports
+reading command line argument defaults from a configuration file. You can either
+put defaults in a `.jsx-info.json` file or under a key named `"jsx-info"` in
+your `package.json` file.
+
+Either way, your configuration should be JSON that looks like this, where every
+key is optional:
+
+```json
+{
+  "babelPlugins": ["decorators-legacy", "pipelineOperator"],
+  "directory": "src",
+  "ignore": ["**/__test__", "legacy/**"],
+  "files": "**/*.{js,jsx,tsx}"
+}
+```
+
 ## Note
 
 `jsx-info` strives to parse all _standard_ JS, JSX, and TypeScript syntax. This
