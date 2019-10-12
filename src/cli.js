@@ -1,3 +1,4 @@
+const path = require("path");
 const program = require("commander");
 const cosmiconfig = require("cosmiconfig");
 
@@ -9,7 +10,7 @@ function listOption(x, acc = []) {
   return acc;
 }
 
-program.name(pkg.name);
+program.name("jsx-info");
 program.version(pkg.version, "-v, --version");
 program
   .arguments("[components...]")
@@ -39,8 +40,8 @@ program
   )
   .option(
     "--files <PATTERN>",
-    "glob pattern used to find input files",
-    "**/*.{js,jsx,tsx}"
+    "glob pattern used to find input files (repeatable)",
+    listOption
   )
   .option(
     "--sort <alphabetical|usage>",
@@ -57,20 +58,18 @@ program.on("--help", () => {
   print(`
 Examples:
   # Display info for every component
-  $ ${pkg.name}
+  $ jsx-info
 
   # Display info only for <div> and <Tab.Container>
-  $ ${pkg.name} div Tab.Container
+  $ jsx-info div Tab.Container
 
   # Ignore any folder named at any depth named \`__test__\`,
   # as well as \`packages/legacy\`
-  $ ${pkg.name} --ignore '**/__test__' --ignore packages/legacy
+  $ jsx-info --ignore '**/__test__' --ignore packages/legacy
 
 
   # Enable Babel plugins
-  $ ${
-    pkg.name
-  } --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
+  $ jsx-info --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
 
   # Example .jsx-info.json config file
   {
@@ -97,6 +96,13 @@ function getConfig() {
     const result = explorer.searchSync();
     if (result) {
       print(`Loaded configuration from ${result.filepath}\n`);
+      if (result.config.directory) {
+        result.config.directory = path.resolve(
+          result.filepath,
+          "..",
+          result.config.directory
+        );
+      }
       return result.config;
     }
   } catch (err) {
@@ -107,15 +113,19 @@ function getConfig() {
 
 const config = getConfig();
 
+function concat(a, b) {
+  return [...(a || []), ...(b || [])];
+}
+
 exports.components = program.args;
 exports.showProgress = program.progress;
-exports.babelPlugins = [
-  ...(config.babelPlugins || []),
-  ...(program.addBabelPlugin || [])
-];
+exports.babelPlugins = concat(config.babelPlugins, program.addBabelPlugin);
 exports.directory = program.directory || config.directory;
 exports.gitignore = program.gitignore;
-exports.ignore = [...(program.ignore || []), ...(config.ignore || [])];
-exports.files = program.files || config.files;
+exports.ignore = concat(program.ignore, config.ignore);
+exports.files = concat(program.files, config.files);
+if (exports.files.length === 0) {
+  exports.files = ["**/*.{js,jsx,tsx}"];
+}
 exports.sort = program.sort || "usage";
 exports.report = program.report || ["usage", "props"];
