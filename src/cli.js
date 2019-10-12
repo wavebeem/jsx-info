@@ -2,7 +2,7 @@ const program = require("commander");
 const cosmiconfig = require("cosmiconfig");
 
 const pkg = require("../package.json");
-const { print, printError, styleHeading } = require("./printer");
+const { print, printError } = require("./printer");
 
 function listOption(x, acc = []) {
   acc.push(x);
