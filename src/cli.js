@@ -72,6 +72,14 @@ Examples:
     pkg.name
   } --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
 
+  # Example .jsx-info.json config file
+  {
+    "babelPlugins": ["decorators-legacy", "pipelineOperator"],
+    "directory": "src",
+    "ignore": ["**/__test__", "legacy/**"],
+    "files": "**/*.{js,jsx,tsx}"
+  }
+
 Full documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
