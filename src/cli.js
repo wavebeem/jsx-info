@@ -76,7 +76,7 @@ Examples:
     "babelPlugins": ["decorators-legacy", "pipelineOperator"],
     "directory": "src",
     "ignore": ["**/__test__", "legacy/**"],
-    "files": "**/*.{js,jsx,tsx}"
+    "files": ["**/*.{js,jsx,tsx}"]
   }
 
 Full documentation can be found at https://github.com/wavebeem/jsx-info

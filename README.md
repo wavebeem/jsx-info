@@ -64,7 +64,7 @@ key is optional:
   "babelPlugins": ["decorators-legacy", "pipelineOperator"],
   "directory": "src",
   "ignore": ["**/__test__", "legacy/**"],
-  "files": "**/*.{js,jsx,tsx}"
+  "files": ["**/*.{js,jsx,tsx}"]
 }
 ```
 
