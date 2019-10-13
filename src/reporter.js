@@ -17,7 +17,7 @@ class Reporter {
     return Array.from(map.values()).reduce((total, count) => total + count, 0);
   }
 
-  _sortMapHelper(map, fn) {
+  _sortMapHelper(map) {
     const entries = Array.from(map.entries());
     const sortTypes = {
       usage: (a, b) => {
@@ -33,10 +33,7 @@ class Reporter {
         return 0;
       }
     };
-    entries.sort((a, b) => {
-      const compare = sortTypes[this._sortType];
-      return fn({ compare, a, b });
-    });
+    entries.sort(sortTypes[this._sortType]);
     return new Map(entries);
   }
 
@@ -99,9 +96,7 @@ class Reporter {
         `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
       )
     );
-    const pairs = this._sortMapHelper(this._components, ({ compare, a, b }) => {
-      return compare(a, b);
-    });
+    const pairs = this._sortMapHelper(this._components);
     const maxDigits = getMaxDigits(pairs.values());
     for (const [componentName, count] of pairs) {
       printer.print(
@@ -113,12 +108,7 @@ class Reporter {
   }
 
   reportPropUsage() {
-    const sorted = this._sortMapHelper(
-      this._components,
-      ({ compare, a, b }) => {
-        return compare(a, b);
-      }
-    );
+    const sorted = this._sortMapHelper(this._components);
     for (const [componentName] of sorted) {
       const componentUsage = this._components.get(componentName);
       printer.print(
@@ -130,20 +120,19 @@ class Reporter {
           } with the following prop usage:`
         )
       );
-      // console.log(this._componentProps.get(componentName));
       const pairs = this._sortMapHelper(
-        this._componentProps.get(componentName) || new Map(),
-        ({ compare, a, b }) => {
-          return compare(a, b);
-        }
+        new Map(
+          [...(this._componentProps.get(componentName) || new Map())].map(x => {
+            x[1] = x[1].usage;
+            return x;
+          })
+        )
       );
-      const maxDigits = getMaxDigits(
-        [...pairs.values()].map(data => data.usage)
-      );
-      for (const [propName, data] of pairs) {
+      const maxDigits = getMaxDigits(pairs.values());
+      for (const [propName, usage] of pairs) {
         printer.print(
-          "  " + printer.styleNumber(data.usage.toString().padStart(maxDigits)),
-          "  " + printer.textMeter(componentUsage, data.usage),
+          "  " + printer.styleNumber(usage.toString().padStart(maxDigits)),
+          "  " + printer.textMeter(componentUsage, usage),
           "  " + printer.stylePropName(propName)
         );
       }
