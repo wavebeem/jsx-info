@@ -49,7 +49,13 @@ async function main() {
           reporter.addComponent(componentName);
         },
         onProp: ({ componentName, propName, propCode, startLoc }) => {
-          reporter.addProp({ componentName, propName, propCode, startLoc });
+          reporter.addProp({
+            componentName,
+            propName,
+            propCode,
+            startLoc,
+            filename
+          });
         }
       });
     } catch (error) {

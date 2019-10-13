@@ -51,11 +51,11 @@ class Reporter {
     );
   }
 
-  addProp({ componentName, propName, propCode, startLoc }) {
+  addProp({ componentName, propName, propCode, startLoc, filename }) {
     const props = this._componentProps.get(componentName) || new Map();
     const prop = props.get(propName) || { usage: 0, lines: [] };
     prop.usage++;
-    prop.lines.push({ propCode, startLoc });
+    prop.lines.push({ propCode, startLoc, filename });
     props.set(propName, prop);
     this._componentProps.set(componentName, props);
   }
