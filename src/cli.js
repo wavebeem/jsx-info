@@ -49,7 +49,7 @@ program
     /^(alphabetical|usage)$/i
   )
   .option(
-    "--report <usage|props>",
+    "--report <usage|props|lines>",
     "specify reports to show (repeatable)",
     listOption
   );

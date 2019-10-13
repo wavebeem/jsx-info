@@ -118,6 +118,11 @@ class Reporter {
           "  " + printer.stylePropName(propName)
         );
       }
+      printer.print(`
+Want to see where the className prop was used on the <div> component?
+
+    jsx-info --report lines --prop className div
+`);
     }
   }
 }
