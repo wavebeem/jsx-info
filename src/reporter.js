@@ -17,17 +17,26 @@ class Reporter {
     return Array.from(map.values()).reduce((total, count) => total + count, 0);
   }
 
-  _sortMap(map) {
+  _sortMapHelper(map, fn) {
     const entries = Array.from(map.entries());
     const sortTypes = {
-      usage: (a, b) => b[1] - a[1],
-      alphabatical: (a, b) => {
-        if (b[0] < a[0]) return 1;
-        else if (b[0] > a[0]) return -1;
-        else return 0;
+      usage: (a, b) => {
+        return b[1] - a[1];
+      },
+      alphabetical: (a, b) => {
+        if (b[0] < a[0]) {
+          return 1;
+        }
+        if (b[0] > a[0]) {
+          return -1;
+        }
+        return 0;
       }
     };
-    entries.sort(sortTypes[this._sortType]);
+    entries.sort((a, b) => {
+      const compare = sortTypes[this._sortType];
+      return fn({ compare, a, b });
+    });
     return new Map(entries);
   }
 
@@ -45,10 +54,12 @@ class Reporter {
     );
   }
 
-  addProp(componentName, propName) {
+  addProp({ componentName, propName, propCode, startLoc }) {
     const props = this._componentProps.get(componentName) || new Map();
-    const prevPropUsage = props.get(propName) || 0;
-    props.set(propName, prevPropUsage + 1);
+    const prop = props.get(propName) || { usage: 0, lines: [] };
+    prop.usage++;
+    prop.lines.push({ propCode, startLoc });
+    props.set(propName, prop);
     this._componentProps.set(componentName, props);
   }
 
@@ -79,14 +90,18 @@ class Reporter {
 
   reportComponentUsage() {
     const totalComponentsCount = this._components.size;
-    if (!totalComponentsCount) return;
+    if (totalComponentsCount === 0) {
+      return;
+    }
     const totalComponentUsageCount = this._sumValues(this._components);
     printer.print(
       printer.styleHeading(
         `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
       )
     );
-    const pairs = this._sortMap(this._components);
+    const pairs = this._sortMapHelper(this._components, ({ compare, a, b }) => {
+      return compare(a, b);
+    });
     const maxDigits = getMaxDigits(pairs.values());
     for (const [componentName, count] of pairs) {
       printer.print(
@@ -98,7 +113,13 @@ class Reporter {
   }
 
   reportPropUsage() {
-    for (const [componentName, props] of this._sortMap(this._componentProps)) {
+    const sorted = this._sortMapHelper(
+      this._components,
+      ({ compare, a, b }) => {
+        return compare(a, b);
+      }
+    );
+    for (const [componentName] of sorted) {
       const componentUsage = this._components.get(componentName);
       printer.print(
         printer.styleHeading(
@@ -109,21 +130,33 @@ class Reporter {
           } with the following prop usage:`
         )
       );
-      const pairs = this._sortMap(props);
-      const maxDigits = getMaxDigits(pairs.values());
-      for (const [propName, count] of pairs) {
+      // console.log(this._componentProps.get(componentName));
+      const pairs = this._sortMapHelper(
+        this._componentProps.get(componentName) || new Map(),
+        ({ compare, a, b }) => {
+          return compare(a, b);
+        }
+      );
+      const maxDigits = getMaxDigits(
+        [...pairs.values()].map(data => data.usage)
+      );
+      for (const [propName, data] of pairs) {
         printer.print(
-          "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
-          "  " + printer.textMeter(componentUsage, count),
+          "  " + printer.styleNumber(data.usage.toString().padStart(maxDigits)),
+          "  " + printer.textMeter(componentUsage, data.usage),
           "  " + printer.stylePropName(propName)
         );
       }
-      printer.print(`
+    }
+    printer.print(`
 Want to see where the className prop was used on the <div> component?
 
-    jsx-info --report lines --prop className div
+  jsx-info --report lines --prop className div
 `);
-    }
+  }
+
+  reportLinesUsage() {
+    printer.print("\nTODO: lines report");
   }
 }
 

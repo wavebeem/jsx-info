@@ -71,11 +71,14 @@ function parse(code, options = {}) {
   traverse(ast, {
     JSXElement(path) {
       const node = path.node;
-      const component = createComponent(node);
-      if (doReportComponent(component)) {
-        onComponent(component);
+      const componentName = createComponent(node);
+      if (doReportComponent(componentName)) {
+        onComponent(componentName);
         for (const propNode of node.openingElement.attributes) {
-          onProp(component, createProp(propNode));
+          const propCode = code.slice(propNode.start, propNode.end);
+          const propName = createProp(propNode);
+          const startLoc = propNode.loc.start;
+          onProp({ componentName, propName, propCode, startLoc });
         }
       }
     }

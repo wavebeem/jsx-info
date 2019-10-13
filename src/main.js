@@ -45,8 +45,12 @@ async function main() {
         babelPlugins,
         typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
         onlyComponents: components,
-        onComponent: component => reporter.addComponent(component),
-        onProp: (component, prop) => reporter.addProp(component, prop)
+        onComponent: componentName => {
+          reporter.addComponent(componentName);
+        },
+        onProp: ({ componentName, propName, propCode, startLoc }) => {
+          reporter.addProp({ componentName, propName, propCode, startLoc });
+        }
       });
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -68,6 +72,9 @@ async function main() {
   }
   if (report.includes("props")) {
     reporter.reportPropUsage();
+  }
+  if (report.includes("lines")) {
+    reporter.reportLinesUsage();
   }
   reporter.reportErrors();
 }
