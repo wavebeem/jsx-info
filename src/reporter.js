@@ -145,7 +145,22 @@ Want to see where the className prop was used on the <div> component?
   }
 
   reportLinesUsage() {
-    printer.print("\nTODO: lines report");
+    // TODO: Does it make sense to sort the output here somehow?
+    for (const [componentName, props] of this._componentProps) {
+      for (const [, /* propName */ data] of props) {
+        for (const lineData of data.lines) {
+          const { filename, startLoc, propCode } = lineData;
+          const { line, column } = startLoc;
+          const styledComponentName = printer.styleComponentName(componentName);
+          printer.print(
+            printer.styleHeading(
+              `${styledComponentName} ${filename}:${line}:${column}`
+            )
+          );
+          printer.print(`    ${propCode}`);
+        }
+      }
+    }
   }
 }
 
