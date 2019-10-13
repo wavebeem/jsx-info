@@ -157,7 +157,7 @@ Want to see where the className prop was used on the <div> component?
               `${styledComponentName} ${filename}:${line}:${column}`
             )
           );
-          printer.print(`    ${propCode}`);
+          printer.print(propCode);
         }
       }
     }
