@@ -1,6 +1,6 @@
 {
   "name": "jsx-info",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "displays a report of JSX component and prop usage",
   "bin": "src/jsx-info.js",
   "scripts": {
