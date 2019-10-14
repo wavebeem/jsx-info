@@ -78,7 +78,8 @@ function parse(code, options = {}) {
           const propCode = code.slice(propNode.start, propNode.end);
           const propName = createProp(propNode);
           const startLoc = propNode.loc.start;
-          onProp({ componentName, propName, propCode, startLoc });
+          const endLoc = propNode.loc.end;
+          onProp({ componentName, propName, propCode, startLoc, endLoc });
         }
       }
     }

@@ -13,6 +13,7 @@ const parse = require("./parse");
 const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
+const { formatPrettyCode } = require("./formatPrettyCode");
 
 async function sleep() {
   return new Promise(resolve => {
@@ -41,19 +42,23 @@ async function main() {
       await sleep();
     }
     try {
-      parse(codeSource.codeFromFile(filename), {
+      const code = codeSource.codeFromFile(filename);
+      parse(code, {
         babelPlugins,
         typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
         onlyComponents: components,
         onComponent: componentName => {
           reporter.addComponent(componentName);
         },
-        onProp: ({ componentName, propName, propCode, startLoc }) => {
+        onProp: ({ componentName, propName, propCode, startLoc, endLoc }) => {
+          const prettyCode = formatPrettyCode(code, startLoc.line, endLoc.line);
           reporter.addProp({
             componentName,
             propName,
             propCode,
             startLoc,
+            endLoc,
+            prettyCode,
             filename
           });
         }

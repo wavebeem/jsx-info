@@ -51,11 +51,11 @@ class Reporter {
     );
   }
 
-  addProp({ componentName, propName, propCode, startLoc, filename }) {
+  addProp({ componentName, propName, prettyCode, startLoc, filename }) {
     const props = this._componentProps.get(componentName) || new Map();
     const prop = props.get(propName) || { usage: 0, lines: [] };
     prop.usage++;
-    prop.lines.push({ propCode, startLoc, filename });
+    prop.lines.push({ prettyCode, startLoc, filename });
     props.set(propName, prop);
     this._componentProps.set(componentName, props);
   }
@@ -149,7 +149,7 @@ Want to see where the className prop was used on the <div> component?
     for (const [componentName, props] of this._componentProps) {
       for (const [, /* propName */ data] of props) {
         for (const lineData of data.lines) {
-          const { filename, startLoc, propCode } = lineData;
+          const { filename, startLoc, prettyCode } = lineData;
           const { line, column } = startLoc;
           const styledComponentName = printer.styleComponentName(componentName);
           printer.print(
@@ -157,7 +157,7 @@ Want to see where the className prop was used on the <div> component?
               `${styledComponentName} ${filename}:${line}:${column}`
             )
           );
-          printer.print(propCode);
+          printer.print(prettyCode);
         }
       }
     }
