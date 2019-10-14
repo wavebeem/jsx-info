@@ -38,7 +38,7 @@ const styleHeading = (...args) => {
 };
 
 const styleLinenos = (...args) => {
-  return chalk.green(...args);
+  return chalk.bold(...args);
 };
 
 const spinner = ora();
