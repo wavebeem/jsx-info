@@ -1,6 +1,8 @@
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
+const { formatPropValue } = require("./formatPropValue");
+
 function createProp(attributeNode) {
   function getAttributeName(attributeNode) {
     switch (attributeNode.type) {
@@ -53,7 +55,9 @@ function parse(code, options = {}) {
     onProp = () => {}
   } = options;
   function doReportComponent(component) {
-    if (onlyComponents.length === 0) return true;
+    if (onlyComponents.length === 0) {
+      return true;
+    }
     return onlyComponents.indexOf(component) !== -1;
   }
   const ast = parser.parse(code, {
@@ -71,11 +75,23 @@ function parse(code, options = {}) {
   traverse(ast, {
     JSXElement(path) {
       const node = path.node;
-      const component = createComponent(node);
-      if (doReportComponent(component)) {
-        onComponent(component);
+      const componentName = createComponent(node);
+      if (doReportComponent(componentName)) {
+        onComponent(componentName);
         for (const propNode of node.openingElement.attributes) {
-          onProp(component, createProp(propNode));
+          const propCode = code.slice(propNode.start, propNode.end);
+          const propName = createProp(propNode);
+          const startLoc = propNode.loc.start;
+          const endLoc = propNode.loc.end;
+          const propValue = formatPropValue(propNode.value);
+          onProp({
+            componentName,
+            propName,
+            propCode,
+            startLoc,
+            endLoc,
+            propValue
+          });
         }
       }
     }

@@ -49,27 +49,39 @@ program
     /^(alphabetical|usage)$/i
   )
   .option(
-    "--report <usage|props>",
+    "--report <usage|props|lines>",
     "specify reports to show (repeatable)",
     listOption
+  )
+  .option(
+    "--prop <PROP>",
+    "which prop to search for when running `--report lines`"
   );
 
 program.on("--help", () => {
   print(`
 Examples:
   # Display info for every component
-  $ jsx-info
+  $ npx jsx-info
 
   # Display info only for <div> and <Tab.Container>
-  $ jsx-info div Tab.Container
+  $ npx jsx-info div Tab.Container
+
+  # See lines where className prop was used on div component
+  $ npx jsx-info --report lines --prop className div
+
+  # See lines where \`id\` prop was used on any component
+  $ npx jsx-info --report lines --prop id
+
+  # See lines where kind prop was used with value "primary" on Button component
+  $ npx jsx-info --report lines --prop kind=primary Button
 
   # Ignore any folder named at any depth named \`__test__\`,
   # as well as \`packages/legacy\`
-  $ jsx-info --ignore '**/__test__' --ignore packages/legacy
-
+  $ npx jsx-info --ignore '**/__test__' --ignore packages/legacy
 
   # Enable Babel plugins
-  $ jsx-info --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
+  $ npx jsx-info --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
 
   # Example .jsx-info.json config file
   {
@@ -78,6 +90,12 @@ Examples:
     "ignore": ["**/__test__", "legacy/**"],
     "files": ["**/*.{js,jsx,tsx}"]
   }
+
+  # Find <Button kind="primary">
+  $ npx jsx-info --report lines --prop kind=primary Button
+
+  # Find all uses of the prop \`id\`
+  $ npx jsx-info --report lines --prop id
 
 Full documentation can be found at https://github.com/wavebeem/jsx-info
 `);
@@ -117,6 +135,7 @@ function concat(a, b) {
   return [...(a || []), ...(b || [])];
 }
 
+exports.prop = program.prop;
 exports.components = program.args;
 exports.showProgress = program.progress;
 exports.babelPlugins = concat(config.babelPlugins, program.addBabelPlugin);

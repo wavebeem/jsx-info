@@ -49,6 +49,14 @@ a different directory like this:
 
     $ npx jsx-info --directory app/src
 
+Find `<Button kind="primary">`
+
+    $ npx jsx-info --report lines --prop kind=primary Button
+
+Find all uses of the prop `id`
+
+    $ npx jsx-info --report lines --prop id
+
 ## Configuration
 
 In order to avoid repeating command line arguments as often, `jsx-info` supports

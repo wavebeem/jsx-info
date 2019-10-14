@@ -37,6 +37,10 @@ const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
+const styleLinenos = (...args) => {
+  return chalk.bold(...args);
+};
+
 const spinner = ora();
 
 // eslint-disable-next-line no-console
@@ -47,6 +51,7 @@ const printError = console.error.bind(console);
 
 exports.styleComponentName = styleComponentName;
 exports.stylePropName = stylePropName;
+exports.styleLinenos = styleLinenos;
 exports.styleError = styleError;
 exports.styleNumber = styleNumber;
 exports.textMeter = textMeter;
