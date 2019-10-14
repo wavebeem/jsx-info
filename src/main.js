@@ -15,7 +15,6 @@ const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
 const { formatPrettyCode } = require("./formatPrettyCode");
-const { EXPRESSION } = require("./formatPropValue");
 
 async function sleep() {
   return new Promise(resolve => {
