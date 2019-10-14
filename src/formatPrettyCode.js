@@ -15,6 +15,8 @@ function getLines(code) {
 function formatPrettyCode(code, startLine, endLine) {
   const output = [];
   const lines = getLines(code);
+  // Line numbers should be padded to at least 4 digits for consistency and
+  // readability, but let's also let them grow if we have super long files :|
   const maxDigits = Math.max(
     String(startLine).length,
     String(endLine).length,
