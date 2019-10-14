@@ -138,9 +138,9 @@ class Reporter {
       }
     }
     printer.print(`
-Want to see where the className prop was used on the <div> component?
+Tip: Want to see where the className prop was used on the <div> component?
 
-  jsx-info --report lines --prop className div
+  npx jsx-info --report lines --prop className div
 `);
   }
 

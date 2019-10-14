@@ -1,3 +1,8 @@
+# v1.6.0
+
+- Adds `--report lines --prop <PROP[=value]>` option
+- Adds config file support
+
 # v1.5.0
 
 - Prop usage graphs are now relative to the number of component usages, rather
