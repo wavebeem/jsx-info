@@ -4,6 +4,9 @@ function formatPropValue(value) {
   if (value === null) {
     return "true";
   }
+  if (!value) {
+    return EXPRESSION;
+  }
   switch (value.type) {
     // TODO: Should we interpret anything else here?
     case "StringLiteral":

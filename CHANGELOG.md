@@ -1,3 +1,7 @@
+# v1.6.1
+
+- Crash fix
+
 # v1.6.0
 
 - Adds `--report lines --prop <PROP[=value]>` option
