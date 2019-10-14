@@ -1,6 +1,8 @@
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
+const { formatPropValue } = require("./formatPropValue");
+
 function createProp(attributeNode) {
   function getAttributeName(attributeNode) {
     switch (attributeNode.type) {
@@ -53,7 +55,9 @@ function parse(code, options = {}) {
     onProp = () => {}
   } = options;
   function doReportComponent(component) {
-    if (onlyComponents.length === 0) return true;
+    if (onlyComponents.length === 0) {
+      return true;
+    }
     return onlyComponents.indexOf(component) !== -1;
   }
   const ast = parser.parse(code, {
@@ -79,7 +83,15 @@ function parse(code, options = {}) {
           const propName = createProp(propNode);
           const startLoc = propNode.loc.start;
           const endLoc = propNode.loc.end;
-          onProp({ componentName, propName, propCode, startLoc, endLoc });
+          const propValue = formatPropValue(propNode.value);
+          onProp({
+            componentName,
+            propName,
+            propCode,
+            startLoc,
+            endLoc,
+            propValue
+          });
         }
       }
     }

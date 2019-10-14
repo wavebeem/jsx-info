@@ -7,13 +7,15 @@ const {
   sort,
   showProgress,
   babelPlugins,
-  ignore
+  ignore,
+  prop
 } = require("./cli");
 const parse = require("./parse");
 const Reporter = require("./reporter");
 const printer = require("./printer");
 const codeSource = require("./code-source");
 const { formatPrettyCode } = require("./formatPrettyCode");
+const { EXPRESSION } = require("./formatPropValue");
 
 async function sleep() {
   return new Promise(resolve => {
@@ -22,6 +24,9 @@ async function sleep() {
 }
 
 async function main() {
+  if (!prop && report.includes("lines")) {
+    throw new Error("`--prop` argument required for `lines` report");
+  }
   const timeStart = Date.now();
   if (showProgress) {
     printer.spinner.text = "Finding files";
@@ -50,7 +55,31 @@ async function main() {
         onComponent: componentName => {
           reporter.addComponent(componentName);
         },
-        onProp: ({ componentName, propName, propCode, startLoc, endLoc }) => {
+        onProp: ({
+          componentName,
+          propName,
+          propCode,
+          startLoc,
+          endLoc,
+          propValue
+        }) => {
+          if (prop) {
+            let wantPropKey = prop;
+            let wantPropValue = undefined;
+            if (prop.includes("=")) {
+              const index = prop.indexOf("=");
+              const key = prop.slice(0, index);
+              const val = prop.slice(index + 1);
+              wantPropKey = key;
+              wantPropValue = val;
+            }
+            if (propName !== wantPropKey) {
+              return;
+            }
+            if (wantPropValue !== undefined && propValue !== wantPropValue) {
+              return;
+            }
+          }
           const prettyCode = formatPrettyCode(code, startLoc.line, endLoc.line);
           reporter.addProp({
             componentName,
@@ -91,7 +120,12 @@ async function main() {
 }
 
 main().catch(err => {
-  // eslint-disable-next-line no-console
-  console.error(err);
+  if (process.env.DEBUG === "true") {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  } else {
+    // eslint-disable-next-line no-console
+    console.error(err.message);
+  }
   process.exit(1);
 });

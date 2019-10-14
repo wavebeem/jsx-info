@@ -129,6 +129,7 @@ function concat(a, b) {
   return [...(a || []), ...(b || [])];
 }
 
+exports.prop = program.prop;
 exports.components = program.args;
 exports.showProgress = program.progress;
 exports.babelPlugins = concat(config.babelPlugins, program.addBabelPlugin);
