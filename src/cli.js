@@ -106,7 +106,7 @@ function getConfig() {
   }
   try {
     const explorer = cosmiconfig("jsx-info", {
-      searchPlaces: ["package.json", ".jsx-info.json"]
+      searchPlaces: ["package.json", ".jsx-info.json"],
     });
     const result = explorer.searchSync();
     if (result) {

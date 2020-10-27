@@ -2,14 +2,14 @@
   "name": "jsx-info",
   "version": "1.6.1",
   "description": "displays a report of JSX component and prop usage",
-  "main": "src/api.js",
-  "bin": "src/jsx-info.js",
+  "main": "dist/api.js",
+  "bin": "dist/jsx-info.js",
   "scripts": {
-    "preversion": "npm test",
+    "preversion": "npm test && rm -rf dist && tsc",
     "postversion": "git push && git push --tags && npm publish",
-    "start": "node src/jsx-info.js",
+    "start": "tsc --watch",
     "upgrade": "npm-check --update",
-    "test": "eslint src && prettier --list-different \"src/**/*.js\""
+    "test": "eslint src --ext .js,.ts && prettier --list-different \"src/**/*.{js,ts}\""
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "npm-check": "^5.9.0",
-    "prettier": "^1.17.0"
+    "prettier": "^1.17.0",
+    "typescript": "^4.0.5"
   }
 }
