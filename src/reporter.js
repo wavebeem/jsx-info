@@ -1,24 +1,21 @@
-const printer = require("./printer");
-
-function getMaxDigits(iterable) {
-  return Math.max(...[...iterable].map(n => n.toString().length));
-}
-
 class Reporter {
   constructor({ sortType }) {
     this._sortType = sortType;
-    this._errors = new Map();
-    this._suggestedPlugins = new Set();
-    this._components = new Map();
-    this._componentProps = new Map();
+    this._errors = {};
+    this._suggestedPlugins = [];
+    this._components = {};
+    this._componentProps = {};
   }
 
   _sumValues(map) {
-    return Array.from(map.values()).reduce((total, count) => total + count, 0);
+    return Array.from(Object.values(map)).reduce(
+      (total, count) => total + count,
+      0
+    );
   }
 
-  _sortMapHelper(map) {
-    const entries = Array.from(map.entries());
+  _sortObjHelper(map) {
+    const entries = Array.from(Object.entries(map));
     const sortTypes = {
       usage: (a, b) => {
         return b[1] - a[1];
@@ -34,133 +31,75 @@ class Reporter {
       }
     };
     entries.sort(sortTypes[this._sortType]);
-    return new Map(entries);
+    return Object.fromEntries(entries);
   }
 
   addParseError(filename, error) {
-    this._errors.set(filename, error);
+    this._errors[filename] = error;
     for (const plugin of error.missingPlugin || []) {
-      this._suggestedPlugins.add(plugin);
+      if (!this._suggestedPlugins.includes(plugin)) {
+        this._suggestedPlugins.push(plugin);
+      }
     }
   }
 
   addComponent(componentName) {
-    this._components.set(
-      componentName,
-      (this._components.get(componentName) || 0) + 1
-    );
+    this._components[componentName] =
+      (this._components[componentName] || 0) + 1;
   }
 
-  addProp({ componentName, propName, prettyCode, startLoc, filename }) {
-    const props = this._componentProps.get(componentName) || new Map();
-    const prop = props.get(propName) || { usage: 0, lines: [] };
+  addProp({ componentName, propName, prettyCode, startLoc, endLoc, filename }) {
+    const props = this._componentProps[componentName] || {};
+    const prop = props[propName] || { usage: 0, lines: [] };
     prop.usage++;
-    prop.lines.push({ prettyCode, startLoc, filename });
-    props.set(propName, prop);
-    this._componentProps.set(componentName, props);
+    prop.lines.push({ prettyCode, startLoc, endLoc, filename });
+    props[propName] = prop;
+    this._componentProps[componentName] = props;
   }
 
-  reportErrors() {
-    const errorsCount = this._errors.size;
-    if (errorsCount) {
-      printer.print(
-        "\n" + errorsCount,
-        "parse",
-        errorsCount === 1 ? "error" : "errors"
-      );
-      for (const [filename, error] of this._errors) {
-        const { loc, message } = error;
-        const { line, column } = loc;
-        printer.print(
-          `  ${filename}:${line}:${column}`,
-          printer.styleError(message)
-        );
-      }
-      if (this._suggestedPlugins.size) {
-        printer.print("Try adding at least one of the following options:");
-        for (const plugin of this._suggestedPlugins) {
-          printer.print("  --add-babel-plugin", plugin);
-        }
-      }
-    }
+  getErrors() {
+    return this._errors;
   }
 
-  reportComponentUsage() {
-    const totalComponentsCount = this._components.size;
-    if (totalComponentsCount === 0) {
-      return;
-    }
-    const totalComponentUsageCount = this._sumValues(this._components);
-    printer.print(
-      printer.styleHeading(
-        `${totalComponentsCount} components used ${totalComponentUsageCount} times:`
-      )
-    );
-    const pairs = this._sortMapHelper(this._components);
-    const maxDigits = getMaxDigits(pairs.values());
-    for (const [componentName, count] of pairs) {
-      printer.print(
-        "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
-        "  " + printer.textMeter(totalComponentUsageCount, count),
-        "  " + printer.styleComponentName(componentName)
-      );
-    }
+  getSuggestedPlugins() {
+    return this._suggestedPlugins;
   }
 
-  reportPropUsage() {
-    const sorted = this._sortMapHelper(this._components);
-    for (const [componentName] of sorted) {
-      const componentUsage = this._components.get(componentName);
-      printer.print(
-        printer.styleHeading(
-          `${printer.styleComponentName(
-            componentName
-          )} was used ${componentUsage} ${
-            componentUsage === 1 ? "time" : "times"
-          } with the following prop usage:`
+  getTotals() {
+    const componentTotal = Object.keys(this._components).length;
+    const componentUsageTotal = this._sumValues(this._components);
+    return { componentTotal, componentUsageTotal };
+  }
+
+  getComponentUsage() {
+    return this._sortObjHelper(this._components);
+  }
+
+  getSortedComponents() {
+    return this._sortObjHelper(this._components);
+  }
+
+  getPropUsage() {
+    const componentObj = {};
+    for (const componentName of Object.keys(this.getSortedComponents())) {
+      const propsObj = {};
+      const pairs = this._sortObjHelper(
+        Object.entries(this._componentProps[componentName] || {}).map(
+          ([key, value]) => {
+            return [key, value.usage];
+          }
         )
       );
-      const pairs = this._sortMapHelper(
-        new Map(
-          [...(this._componentProps.get(componentName) || new Map())].map(x => {
-            x[1] = x[1].usage;
-            return x;
-          })
-        )
-      );
-      const maxDigits = getMaxDigits(pairs.values());
-      for (const [propName, usage] of pairs) {
-        printer.print(
-          "  " + printer.styleNumber(usage.toString().padStart(maxDigits)),
-          "  " + printer.textMeter(componentUsage, usage),
-          "  " + printer.stylePropName(propName)
-        );
+      for (const [key, val] of Object.values(pairs)) {
+        propsObj[key] = val;
       }
+      componentObj[componentName] = propsObj;
     }
-    printer.print(`
-Tip: Want to see where the className prop was used on the <div> component?
-
-  npx jsx-info --report lines --prop className div
-`);
+    return componentObj;
   }
 
-  reportLinesUsage() {
-    // TODO: Does it make sense to sort the output here somehow?
-    for (const [componentName, props] of this._componentProps) {
-      for (const [, /* propName */ data] of props) {
-        for (const lineData of data.lines) {
-          const { filename, startLoc, prettyCode } = lineData;
-          const { line, column } = startLoc;
-          const styledComponentName = printer.styleComponentName(componentName);
-          printer.print(
-            printer.styleHeading(
-              `${styledComponentName} ${filename}:${line}:${column}`
-            )
-          );
-          printer.print(prettyCode);
-        }
-      }
-    }
+  getLineUsage() {
+    return this._componentProps;
   }
 }
 

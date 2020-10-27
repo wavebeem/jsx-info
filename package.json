@@ -2,6 +2,7 @@
   "name": "jsx-info",
   "version": "1.6.1",
   "description": "displays a report of JSX component and prop usage",
+  "main": "src/api.js",
   "bin": "src/jsx-info.js",
   "scripts": {
     "preversion": "npm test",
@@ -22,7 +23,7 @@
     "statistics",
     "metrics"
   ],
-  "author": "Brian Mock <brian@mockbrian.com>",
+  "author": "Brian Mock <brian@wavebeem.com>",
   "license": "MIT",
   "dependencies": {
     "@babel/parser": "^7.4.3",

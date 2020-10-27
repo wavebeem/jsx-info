@@ -33,19 +33,6 @@ function createComponent(componentNode) {
   return getDottedName(componentNode.openingElement.name);
 }
 
-/**
- * @typedef Options
- * @property {boolean} typescript is the code in typescript default `false`
- * @property {string[]} babelPlugins additional babel plugins to be used
- * @property {string[]} onlyComponents feedback for only these components
- * @property {(component:string) => void} onComponent called when a component was found
- * @property {(component:string, prop:string) => void} onProp called when a component prop was found
- */
-
-/**
- * @param {string} code the code containing JSX
- * @param {Options?} options parsing options
- */
 function parse(code, options = {}) {
   const {
     typescript = false,

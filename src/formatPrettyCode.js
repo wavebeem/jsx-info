@@ -1,5 +1,3 @@
-const printer = require("./printer");
-
 const cache = new Map();
 
 function getLines(code) {
@@ -23,10 +21,7 @@ function formatPrettyCode(code, startLine, endLine) {
     4
   );
   for (let lineno = startLine; lineno <= endLine; lineno++) {
-    output.push(
-      printer.styleLinenos(String(lineno).padStart(maxDigits) + " | ") +
-        lines[lineno - 1]
-    );
+    output.push(String(lineno).padStart(maxDigits) + " | " + lines[lineno - 1]);
   }
   return output.join("\n");
 }

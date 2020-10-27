@@ -18,6 +18,12 @@ const styleError = errorMessage => {
 };
 
 const textMeter = (total, count) => {
+  if (typeof total !== "number") {
+    throw new Error("total must be a number");
+  }
+  if (typeof count !== "number") {
+    throw new Error("count must be a number");
+  }
   const CHAR_BOX_FULL = chalk.bold.green("*");
   const CHAR_BOX_LIGHT = chalk.bold.red("-");
   const size = 10;
@@ -37,10 +43,6 @@ const styleHeading = (...args) => {
   return "\n" + chalk.cyan(...args);
 };
 
-const styleLinenos = (...args) => {
-  return chalk.bold(...args);
-};
-
 const spinner = ora();
 
 // eslint-disable-next-line no-console
@@ -51,7 +53,6 @@ const printError = console.error.bind(console);
 
 exports.styleComponentName = styleComponentName;
 exports.stylePropName = stylePropName;
-exports.styleLinenos = styleLinenos;
 exports.styleError = styleError;
 exports.styleNumber = styleNumber;
 exports.textMeter = textMeter;

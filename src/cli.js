@@ -94,9 +94,6 @@ Examples:
   # Find <Button kind="primary">
   $ npx jsx-info --report lines --prop kind=primary Button
 
-  # Find all uses of the prop \`id\`
-  $ npx jsx-info --report lines --prop id
-
 Full documentation can be found at https://github.com/wavebeem/jsx-info
 `);
 });
