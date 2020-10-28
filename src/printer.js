@@ -1,19 +1,19 @@
 const chalk = require("chalk");
 const ora = require("ora");
 
-const styleComponentName = componentName => {
+const styleComponentName = (componentName) => {
   return chalk.bold("<" + componentName + ">");
 };
 
-const stylePropName = propName => {
+const stylePropName = (propName) => {
   return chalk.bold(propName);
 };
 
-const styleNumber = number => {
+const styleNumber = (number) => {
   return chalk.bold(number);
 };
 
-const styleError = errorMessage => {
+const styleError = (errorMessage) => {
   return chalk.bold.red(errorMessage);
 };
 

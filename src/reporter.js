@@ -1,4 +1,4 @@
-class Reporter {
+export class Reporter {
   constructor({ sortType }) {
     this._sortType = sortType;
     this._errors = {};
@@ -110,5 +110,3 @@ class Reporter {
     return this._componentProps;
   }
 }
-
-module.exports = Reporter;

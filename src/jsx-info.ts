@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const { main } = require("./main");
+import { main } from "./main";
 
-main().catch(err => {
+main().catch((err) => {
   if (process.env.DEBUG === "true") {
     // eslint-disable-next-line no-console
     console.error(err);

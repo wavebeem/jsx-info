@@ -1,7 +1,28 @@
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
-const { formatPropValue } = require("./formatPropValue");
+const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
+
+function formatPropValue(value) {
+  if (value === null) {
+    return "true";
+  }
+  if (!value) {
+    return EXPRESSION;
+  }
+  switch (value.type) {
+    // TODO: Should we interpret anything else here?
+    case "StringLiteral":
+      return value.value;
+    case "JSXExpressionContainer":
+      return formatPropValue(value.expression);
+    case "NumericLiteral":
+    case "BooleanLiteral":
+      return String(value.value);
+    default:
+      return EXPRESSION;
+  }
+}
 
 function createProp(attributeNode) {
   function getAttributeName(attributeNode) {
@@ -39,7 +60,7 @@ function parse(code, options = {}) {
     babelPlugins = [],
     onlyComponents = [],
     onComponent = () => {},
-    onProp = () => {}
+    onProp = () => {},
   } = options;
   function doReportComponent(component) {
     if (onlyComponents.length === 0) {
@@ -56,8 +77,8 @@ function parse(code, options = {}) {
       "dynamicImport",
       "classProperties",
       "objectRestSpread",
-      ...babelPlugins
-    ]
+      ...babelPlugins,
+    ],
   });
   traverse(ast, {
     JSXElement(path) {
@@ -77,11 +98,11 @@ function parse(code, options = {}) {
             propCode,
             startLoc,
             endLoc,
-            propValue
+            propValue,
           });
         }
       }
-    }
+    },
   });
 }
 

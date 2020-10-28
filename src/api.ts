@@ -1,7 +1,7 @@
-import codeSource from "./code-source";
-import { formatPrettyCode } from "./formatPrettyCode";
+import globby from "globby";
+import fs from "fs";
 import parse from "./parse";
-import Reporter from "./reporter";
+import { Reporter } from "./reporter";
 import { sleep } from "./sleep";
 
 interface AnalyzeOptions {
@@ -79,11 +79,12 @@ export async function analyze({
   if (onStart) {
     await onStart();
   }
-  const filenames = await codeSource.searchForFiles({
-    patterns: files,
+  const filenames = await globby(files || "**/*.{js,jsx,tsx}", {
+    absolute: true,
+    onlyFiles: true,
     gitignore,
-    directory,
     ignore,
+    cwd: directory || process.cwd(),
   });
   const reporter = new Reporter({ sortType: sort });
   for (const filename of filenames) {
@@ -93,7 +94,7 @@ export async function analyze({
       await sleep();
     }
     try {
-      const code = codeSource.codeFromFile(filename);
+      const code = fs.readFileSync(filename, "utf8");
       parse(code, {
         babelPlugins,
         typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
@@ -157,4 +158,36 @@ export async function analyze({
     suggestedPlugins: reporter.getSuggestedPlugins(),
     elapsedTime: elapsedTime,
   };
+}
+
+const linesCache = new Map();
+
+function getLines(code: string): string[] {
+  let lines = linesCache.get(code);
+  if (lines) {
+    return lines;
+  }
+  lines = code.split(/\r?\n/);
+  linesCache.set(code, lines);
+  return lines;
+}
+
+function formatPrettyCode(
+  code: string,
+  startLine: number,
+  endLine: number
+): string {
+  const output: string[] = [];
+  const lines = getLines(code);
+  // Line numbers should be padded to at least 4 digits for consistency and
+  // readability, but let's also let them grow if we have super long files :|
+  const maxDigits = Math.max(
+    String(startLine).length,
+    String(endLine).length,
+    4
+  );
+  for (let lineno = startLine; lineno <= endLine; lineno++) {
+    output.push(String(lineno).padStart(maxDigits) + " | " + lines[lineno - 1]);
+  }
+  return output.join("\n");
 }
