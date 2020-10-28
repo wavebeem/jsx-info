@@ -1,6 +1,6 @@
 import { ParserPlugin } from "@babel/parser";
 import program from "commander";
-import cosmiconfig from "cosmiconfig";
+import { cosmiconfigSync } from "cosmiconfig";
 import path from "path";
 import { version } from "../package.json";
 import { ReportType } from "./api";
@@ -94,10 +94,10 @@ function getConfig() {
     return {};
   }
   try {
-    const explorer = cosmiconfig("jsx-info", {
+    const explorer = cosmiconfigSync("jsx-info", {
       searchPlaces: ["package.json", ".jsx-info.json"],
     });
-    const result = explorer.searchSync();
+    const result = explorer.search();
     if (result) {
       print(`\nLoaded configuration from ${result.filepath}\n`);
       if (result.config.directory) {
@@ -110,6 +110,10 @@ function getConfig() {
       return result.config;
     }
   } catch (err) {
+    if (process.env.DEBUG === "true") {
+      // eslint-disable-next-line no-console
+      console.log(err.stack);
+    }
     printError("failed to parse config file");
   }
   return {};

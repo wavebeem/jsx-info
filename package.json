@@ -30,12 +30,12 @@
     "@babel/traverse": "^7.12.1",
     "@types/babel__traverse": "^7.0.15",
     "@types/inquirer": "^7.3.1",
-    "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "cosmiconfig": "^5.2.1",
-    "globby": "^9.2.0",
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
+    "cosmiconfig": "^7.0.0",
+    "globby": "^11.0.1",
     "inquirer": "^7.3.3",
-    "ora": "^3.4.0"
+    "ora": "^5.1.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.6.0",
