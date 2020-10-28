@@ -1,23 +1,23 @@
-const chalk = require("chalk");
-const ora = require("ora");
+import chalk from "chalk";
+import ora from "ora";
 
-const styleComponentName = (componentName) => {
+export function styleComponentName(componentName: string): string {
   return chalk.bold("<" + componentName + ">");
-};
+}
 
-const stylePropName = (propName) => {
+export function stylePropName(propName: string): string {
   return chalk.bold(propName);
-};
+}
 
-const styleNumber = (number) => {
+export function styleNumber(number: string): string {
   return chalk.bold(number);
-};
+}
 
-const styleError = (errorMessage) => {
+export function styleError(errorMessage: string): string {
   return chalk.bold.red(errorMessage);
-};
+}
 
-const textMeter = (total, count) => {
+export function textMeter(total: number, count: number): string {
   if (typeof total !== "number") {
     throw new Error("total must be a number");
   }
@@ -37,26 +37,16 @@ const textMeter = (total, count) => {
     str += CHAR_BOX_LIGHT;
   }
   return str;
-};
+}
 
-const styleHeading = (...args) => {
+export function styleHeading(...args: any[]): string {
   return "\n" + chalk.cyan(...args);
-};
+}
 
-const spinner = ora();
-
-// eslint-disable-next-line no-console
-const print = console.log.bind(console);
+export const spinner = ora();
 
 // eslint-disable-next-line no-console
-const printError = console.error.bind(console);
+export const print = console.log.bind(console);
 
-exports.styleComponentName = styleComponentName;
-exports.stylePropName = stylePropName;
-exports.styleError = styleError;
-exports.styleNumber = styleNumber;
-exports.textMeter = textMeter;
-exports.styleHeading = styleHeading;
-exports.spinner = spinner;
-exports.print = print;
-exports.printError = printError;
+// eslint-disable-next-line no-console
+export const printError = console.error.bind(console);
