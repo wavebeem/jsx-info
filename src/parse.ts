@@ -1,26 +1,11 @@
-// @ts-nocheck
-
-import parser from "@babel/parser";
-import {
-  StringLiteral,
-  JSXElement,
-  JSXFragment,
-  JSXExpressionContainer,
-  JSXIdentifier,
-  JSXMemberExpression,
-} from "@babel/types";
+import { ParserPlugin, parse as babelParse } from "@babel/parser";
 import traverse from "@babel/traverse";
+import { JSXElement, Node } from "@babel/types";
+import { SourceLocation } from "./api";
 
 const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
 
-function formatPropValue(
-  value:
-    | StringLiteral
-    | JSXElement
-    | JSXFragment
-    | JSXExpressionContainer
-    | null
-): string | symbol {
+function formatPropValue(value: Node | null): string | symbol {
   if (value === null) {
     return "true";
   }
@@ -41,39 +26,56 @@ function formatPropValue(
   }
 }
 
-function createProp(attributeNode) {
-  function getAttributeName(
-    attributeNode: JSXIdentifier | JSXMemberExpression
-  ) {
-    switch (attributeNode.type) {
-      case "JSXAttribute":
-        return attributeNode.name.name;
-      case "JSXSpreadAttribute":
-        return "{...}";
-      default:
-        throw new Error(`unexpected node type: ${attributeNode.type}`);
-    }
+function getAttributeName(attributeNode: Node): string {
+  switch (attributeNode.type) {
+    case "JSXIdentifier":
+      return attributeNode.name;
+    case "JSXNamespacedName":
+      return attributeNode.name.name;
+    case "JSXAttribute":
+      return getAttributeName(attributeNode.name);
+    case "JSXSpreadAttribute":
+      return "{...}";
+    default:
+      throw new Error(`unexpected node type: ${attributeNode.type}`);
   }
+}
+
+function createProp(attributeNode: Node) {
   return getAttributeName(attributeNode);
 }
 
-function createComponent(componentNode) {
-  function getDottedName(nameNode: JSXIdentifier | JSXMemberExpression) {
-    switch (nameNode.type) {
-      case "JSXMemberExpression":
-        return [nameNode.object, nameNode.property]
-          .map(getDottedName)
-          .join(".");
-      case "JSXIdentifier":
-        return nameNode.name;
-      default:
-        throw new Error(`unexpected node type: ${nameNode.type}`);
-    }
+function getDottedName(nameNode: Node): string {
+  switch (nameNode.type) {
+    case "JSXMemberExpression":
+      return [nameNode.object, nameNode.property].map(getDottedName).join(".");
+    case "JSXIdentifier":
+      return nameNode.name;
+    default:
+      throw new Error(`unexpected node type: ${nameNode.type}`);
   }
+}
+
+function createComponent(componentNode: JSXElement) {
   return getDottedName(componentNode.openingElement.name);
 }
 
-function parse(code, options = {}) {
+interface ParseOptions {
+  typescript?: boolean;
+  babelPlugins?: ParserPlugin[];
+  onlyComponents?: string[];
+  onComponent?: (componentName: string) => void;
+  onProp?: (prop: {
+    componentName: string;
+    propName: string;
+    propCode: string;
+    startLoc: SourceLocation;
+    endLoc: SourceLocation;
+    propValue: string | symbol;
+  }) => void;
+}
+
+export function parse(code: string, options: ParseOptions = {}) {
   const {
     typescript = false,
     babelPlugins = [],
@@ -81,13 +83,13 @@ function parse(code, options = {}) {
     onComponent = () => {},
     onProp = () => {},
   } = options;
-  function doReportComponent(component) {
+  function doReportComponent(component: string) {
     if (onlyComponents.length === 0) {
       return true;
     }
     return onlyComponents.indexOf(component) !== -1;
   }
-  const ast = parser.parse(code, {
+  const ast = babelParse(code, {
     sourceType: "unambiguous",
     allowReturnOutsideFunction: true,
     plugins: [
@@ -106,7 +108,7 @@ function parse(code, options = {}) {
       if (doReportComponent(componentName)) {
         onComponent(componentName);
         for (const propNode of node.openingElement.attributes) {
-          const propCode = code.slice(propNode.start, propNode.end);
+          const propCode = code.slice(propNode.start || 0, propNode.end || -1);
           const propName = createProp(propNode);
           const startLoc = propNode.loc!.start;
           const endLoc = propNode.loc!.end;
@@ -127,5 +129,3 @@ function parse(code, options = {}) {
     },
   });
 }
-
-module.exports = parse;

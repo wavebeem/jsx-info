@@ -1,6 +1,7 @@
+import { ParserPlugin } from "@babel/parser";
 import fs from "fs";
 import globby from "globby";
-import parse from "./parse";
+import { parse } from "./parse";
 import { sleep } from "./sleep";
 
 type SortType = "usage" | "alphabetical";
@@ -10,7 +11,7 @@ type PropName = string;
 type ComponentName = string;
 
 export interface AnalyzeOptions {
-  babelPlugins?: string[];
+  babelPlugins?: ParserPlugin[];
   components?: string[];
   directory?: string;
   files?: string[];

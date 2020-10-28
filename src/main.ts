@@ -1,5 +1,5 @@
 import cli from "./cli";
-import printer from "./printer";
+import * as printer from "./printer";
 import { Analysis, analyze } from "./api";
 import { sleep } from "./sleep";
 
