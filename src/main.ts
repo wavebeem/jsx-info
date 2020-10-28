@@ -55,13 +55,13 @@ export async function main() {
       type: "list",
       name: "report",
       when: !cli.report,
-      message: "Which report",
+      message: "Which report [--report]",
       choices: [
-        { value: "usage", name: "[usage] Total component usage" },
-        { value: "props", name: "[props] Total props usage" },
+        { value: "usage", name: "Total component usage [usage]" },
+        { value: "props", name: "Total props usage [props]" },
         {
           value: "lines",
-          name: "[lines] Show lines where certain props are used",
+          name: "Show lines where certain props are used [lines]",
         },
       ],
     },
@@ -77,7 +77,7 @@ export async function main() {
       filter(input) {
         return input.trim();
       },
-      message: "Which prop (e.g. `id` or `variant=primary`)",
+      message: "Which prop (e.g. `id` or `variant=primary`) [--prop]",
     },
   ]);
   const cliComponents =
