@@ -1,8 +1,13 @@
-import globby from "globby";
 import fs from "fs";
+import globby from "globby";
 import parse from "./parse";
-import { Reporter } from "./reporter";
 import { sleep } from "./sleep";
+
+type SortType = "usage" | "alphabetical";
+type ReportType = "usage" | "props" | "lines";
+type Filename = string;
+type PropName = string;
+type ComponentName = string;
 
 interface AnalyzeOptions {
   babelPlugins?: string[];
@@ -14,13 +19,21 @@ interface AnalyzeOptions {
   onFile?: (filename: string) => Promise<void>;
   onStart?: () => Promise<void>;
   prop?: string;
-  report?: ("usage" | "props" | "lines")[];
-  sort?: "usage" | "alphabetical";
+  report?: ReportType[];
+  sort?: SortType;
 }
 
-type Filename = string;
-type PropName = string;
-type ComponentName = string;
+interface ComponentProp {
+  componentName: ComponentName;
+  propName: PropName;
+  propCode: string;
+  prettyCode: string;
+  startLoc: SourceLocation;
+  endLoc: SourceLocation;
+  filename: Filename;
+  usage: number;
+  lines: LineInfo[];
+}
 
 interface SourceLocation {
   line: number;
@@ -33,27 +46,30 @@ interface ErrorInfo {
   missingPlugin: string[];
 }
 
-interface LineUsage {
+interface LinePropUsage {
   usage: number;
   lines: LineInfo[];
 }
 
 interface LineInfo {
+  propCode: string;
   prettyCode: string;
   startLoc: SourceLocation;
   endLoc: SourceLocation;
   filename: Filename;
 }
 
+type PropUsage = Record<ComponentName, Record<PropName, number>>;
+type LineUsage = Record<ComponentName, Record<PropName, LinePropUsage>>;
+type ComponentUsage = Record<ComponentName, number>;
+
 interface Analysis {
   filenames: Filename[];
-  totals: {
-    componentTotal: number;
-    componentUsageTotal: number;
-  };
-  componentUsage: Record<ComponentName, number>;
-  propUsage: Record<ComponentName, Record<PropName, number>>;
-  lineUsage: Record<ComponentName, Record<PropName, LineUsage>>;
+  componentTotal: number;
+  componentUsageTotal: number;
+  componentUsage: ComponentUsage;
+  // propUsage: PropUsage;
+  lineUsage: LineUsage;
   errors: Record<Filename, ErrorInfo>;
   suggestedPlugins: string[];
   elapsedTime: number;
@@ -86,7 +102,7 @@ export async function analyze({
     ignore,
     cwd: directory || process.cwd(),
   });
-  const reporter = new Reporter({ sortType: sort });
+  const reporter = new Reporter();
   for (const filename of filenames) {
     if (onFile) {
       await onFile(filename);
@@ -136,6 +152,8 @@ export async function analyze({
             endLoc,
             prettyCode,
             filename,
+            usage: 0,
+            lines: [],
           });
         },
       });
@@ -150,12 +168,12 @@ export async function analyze({
   const elapsedTime = (Date.now() - timeStart) / 1000;
   return {
     filenames,
-    totals: reporter.getTotals(),
-    componentUsage: reporter.getComponentUsage(),
-    propUsage: reporter.getPropUsage() as any,
-    lineUsage: reporter.getLineUsage(),
-    errors: reporter.getErrors(),
-    suggestedPlugins: reporter.getSuggestedPlugins(),
+    componentTotal: reporter.getComponentTotal(),
+    componentUsageTotal: reporter.getComponentUsageTotal(),
+    componentUsage: reporter.components,
+    lineUsage: reporter.componentProps,
+    errors: reporter.errors,
+    suggestedPlugins: reporter.suggestedPlugins,
     elapsedTime: elapsedTime,
   };
 }
@@ -191,3 +209,56 @@ function formatPrettyCode(
   }
   return output.join("\n");
 }
+
+class Reporter {
+  components: ComponentUsage = {};
+  componentProps: Record<string, Record<string, ComponentProp>> = {};
+  suggestedPlugins: string[] = [];
+  errors: Record<Filename, ErrorInfo> = {};
+
+  // TODO: Get the right type for this
+  addParseError(filename: Filename, error: any): void {
+    this.errors[filename] = error;
+    for (const plugin of error.missingPlugin || []) {
+      if (!this.suggestedPlugins.includes(plugin)) {
+        this.suggestedPlugins.push(plugin);
+      }
+    }
+  }
+
+  addComponent(componentName: ComponentName): void {
+    this.components[componentName] = (this.components[componentName] || 0) + 1;
+  }
+
+  addProp(newProp: ComponentProp) {
+    const props = this.componentProps[newProp.componentName] || {};
+    const prop = props[newProp.propName] || newProp;
+    prop.usage++;
+    prop.lines.push({
+      propCode: newProp.propCode,
+      prettyCode: newProp.prettyCode,
+      startLoc: newProp.startLoc,
+      endLoc: newProp.endLoc,
+      filename: newProp.filename,
+    });
+    props[newProp.propName] = prop;
+    this.componentProps[newProp.componentName] = props;
+  }
+
+  getComponentTotal(): number {
+    return Object.keys(this.components).length;
+  }
+
+  getComponentUsageTotal(): number {
+    return Object.values(this.components).reduce((a, b) => a + b, 0);
+  }
+}
+
+(async function() {
+  try {
+    const result = await analyze({});
+    console.log(JSON.stringify(result, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
+})();
