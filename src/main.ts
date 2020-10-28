@@ -1,9 +1,9 @@
-const cli = require("./cli");
-const printer = require("./printer");
-const { analyze } = require("./api");
-const { sleep } = require("./sleep");
+import cli from "./cli";
+import printer from "./printer";
+import { Analysis, analyze } from "./api";
+import { sleep } from "./sleep";
 
-async function main() {
+export async function main() {
   if (!cli.prop && cli.report.includes("lines")) {
     throw new Error("`--prop` argument required for `lines` report");
   }
@@ -46,7 +46,7 @@ async function main() {
   printer.spinner.stop();
 }
 
-function reportTime({ filenames, elapsedTime }) {
+function reportTime({ filenames, elapsedTime }: Analysis) {
   printer.print(
     `Scanned ${filenames.length} files in ${elapsedTime.toFixed(1)} seconds`
   );
@@ -56,7 +56,7 @@ function reportComponentUsage({
   componentTotal,
   componentUsageTotal,
   componentUsage,
-}) {
+}: Analysis) {
   if (componentTotal === 0) {
     return;
   }
@@ -76,7 +76,7 @@ function reportComponentUsage({
   }
 }
 
-function reportLinesUsage({ lineUsage }) {
+function reportLinesUsage({ lineUsage }: Analysis) {
   // TODO: Does it make sense to sort the output here somehow?
   for (const [componentName, props] of Object.entries(lineUsage)) {
     for (const data of Object.values(props)) {
@@ -95,11 +95,11 @@ function reportLinesUsage({ lineUsage }) {
   }
 }
 
-function getMaxDigits(iterable) {
+function getMaxDigits(iterable: Iterable<number>): number {
   return Math.max(...[...iterable].map((n) => n.toString().length));
 }
 
-function reportPropUsage({ propUsage, componentUsage }) {
+function reportPropUsage({ propUsage, componentUsage }: Analysis) {
   const propUsageByComponent = propUsage;
   for (const [componentName, propUsage] of Object.entries(
     propUsageByComponent
@@ -128,7 +128,7 @@ npx jsx-info --report lines --prop className div
 `);
 }
 
-function reportErrors({ errors, suggestedPlugins }) {
+function reportErrors({ errors, suggestedPlugins }: Analysis) {
   const errorsCount = Object.keys(errors).length;
   if (errorsCount) {
     printer.print(
@@ -144,7 +144,7 @@ function reportErrors({ errors, suggestedPlugins }) {
         printer.styleError(message)
       );
     }
-    if (suggestedPlugins.size) {
+    if (suggestedPlugins.length > 0) {
       printer.print("Try adding at least one of the following options:");
       for (const plugin of suggestedPlugins) {
         printer.print("  --add-babel-plugin", plugin);
@@ -152,5 +152,3 @@ function reportErrors({ errors, suggestedPlugins }) {
     }
   }
 }
-
-exports.main = main;

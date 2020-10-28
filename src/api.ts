@@ -9,7 +9,7 @@ type Filename = string;
 type PropName = string;
 type ComponentName = string;
 
-interface AnalyzeOptions {
+export interface AnalyzeOptions {
   babelPlugins?: string[];
   components?: string[];
   directory?: string;
@@ -23,18 +23,19 @@ interface AnalyzeOptions {
   sort?: SortType;
 }
 
-interface SourceLocation {
+export interface SourceLocation {
   line: number;
   column: number;
 }
 
-interface ErrorInfo {
+export interface ErrorInfo {
+  message: string;
   pos: number;
   loc: SourceLocation;
   missingPlugin: string[];
 }
 
-interface LineInfo {
+export interface LineInfo {
   propCode: string;
   prettyCode: string;
   startLoc: SourceLocation;
@@ -42,11 +43,11 @@ interface LineInfo {
   filename: Filename;
 }
 
-type PropUsage = Record<ComponentName, Record<PropName, number>>;
-type LineUsage = Record<ComponentName, Record<PropName, LineInfo[]>>;
-type ComponentUsage = Record<ComponentName, number>;
+export type PropUsage = Record<ComponentName, Record<PropName, number>>;
+export type LineUsage = Record<ComponentName, Record<PropName, LineInfo[]>>;
+export type ComponentUsage = Record<ComponentName, number>;
 
-interface Analysis {
+export interface Analysis {
   filenames: Filename[];
   componentTotal: number;
   componentUsageTotal: number;
@@ -69,7 +70,6 @@ export async function analyze({
   onStart,
   prop,
   report = ["usage", "props"],
-  sort = "usage",
 }: AnalyzeOptions): Promise<Analysis> {
   if (!prop && report.includes("lines")) {
     throw new Error("`prop` option required for `lines` report");
@@ -197,9 +197,14 @@ class Reporter {
   suggestedPlugins: string[] = [];
   errors: Record<Filename, ErrorInfo> = {};
 
-  // TODO: Get the right type for this
+  // TODO: Does Babel expose the actual error type for us?
   addParseError(filename: Filename, error: any): void {
-    this.errors[filename] = error;
+    this.errors[filename] = {
+      message: error.message,
+      pos: error.pos,
+      loc: error.loc,
+      missingPlugin: error.missingPlugin,
+    };
     for (const plugin of error.missingPlugin || []) {
       if (!this.suggestedPlugins.includes(plugin)) {
         this.suggestedPlugins.push(plugin);
