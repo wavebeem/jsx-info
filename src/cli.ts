@@ -4,7 +4,7 @@ import cosmiconfig from "cosmiconfig";
 import path from "path";
 import { version } from "../package.json";
 import { ReportType } from "./api";
-import { print, printError } from "./printer";
+import { print, printError, styleTitle } from "./printer";
 
 function listOption<T>(x: T, acc: T[] = []): T[] {
   acc.push(x);
@@ -87,6 +87,8 @@ Examples:
 
 program.parse(process.argv);
 
+print(styleTitle(`jsx-info ${version} by @wavebeem`));
+
 function getConfig() {
   if (!program.config) {
     return {};
@@ -97,7 +99,7 @@ function getConfig() {
     });
     const result = explorer.searchSync();
     if (result) {
-      print(`Loaded configuration from ${result.filepath}\n`);
+      print(`\nLoaded configuration from ${result.filepath}\n`);
       if (result.config.directory) {
         result.config.directory = path.resolve(
           result.filepath,

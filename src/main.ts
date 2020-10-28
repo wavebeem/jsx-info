@@ -1,5 +1,4 @@
 import { prompt } from "inquirer";
-import { version } from "../package.json";
 import { Analysis, analyze, ReportType } from "./api";
 import { assertNever } from "./assertNever";
 import * as cli from "./cli";
@@ -11,9 +10,24 @@ import {
   styleHeading,
   styleNumber,
   stylePropName,
+  styleTitle,
   textMeter,
 } from "./printer";
 import { sleep } from "./sleep";
+
+function sortByDesc<A, B>(array: A[], fn: (item: A) => B): A[] {
+  return [...array].sort((a, b) => {
+    const xa = fn(a);
+    const xb = fn(b);
+    if (xa < xb) {
+      return 1;
+    } else if (xa > xb) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+}
 
 function fallbackArray<T>(array: T[], fallback: T[]): T[] {
   if (array.length === 0) {
@@ -23,8 +37,6 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
 }
 
 export async function main() {
-  print(styleHeading(`jsx-info ${version} by @wavebeem`));
-  print("");
   const answers = await prompt([
     {
       type: "input",
@@ -56,8 +68,8 @@ export async function main() {
     {
       type: "input",
       name: "prop",
-      when({ reports }) {
-        return reports === "lines" || cli.report === "lines";
+      when({ report }) {
+        return report === "lines" || cli.report === "lines";
       },
       validate(input) {
         return input.trim() !== "";
@@ -136,7 +148,8 @@ function reportComponentUsage({
       `${componentTotal} components used ${componentUsageTotal} times:`
     )
   );
-  for (const [componentName, count] of Object.entries(pairs)) {
+  const sortedUsage = sortByDesc(Object.entries(pairs), ([, count]) => count);
+  for (const [componentName, count] of sortedUsage) {
     print(
       "  " + styleNumber(count.toString().padStart(maxDigits)),
       "  " + textMeter(componentUsageTotal, count),
@@ -162,14 +175,16 @@ function reportLinesUsage({ lineUsage }: Analysis) {
 }
 
 function getMaxDigits(iterable: Iterable<number>): number {
-  return Math.max(...[...iterable].map((n) => n.toString().length));
+  // Pad to at least 4 digits so that most things line up
+  return Math.max(4, ...[...iterable].map((n) => n.toString().length));
 }
 
 function reportPropUsage({ propUsage, componentUsage }: Analysis) {
-  const propUsageByComponent = propUsage;
-  for (const [componentName, propUsage] of Object.entries(
-    propUsageByComponent
-  )) {
+  const propUsageByComponent = sortByDesc(
+    Object.entries(propUsage),
+    ([name]) => componentUsage[name]
+  );
+  for (const [componentName, propUsage] of propUsageByComponent) {
     const compUsage = componentUsage[componentName];
     print(
       styleHeading(
@@ -179,7 +194,11 @@ function reportPropUsage({ propUsage, componentUsage }: Analysis) {
       )
     );
     const maxDigits = getMaxDigits(Object.values(propUsage));
-    for (const [propName, usage] of Object.entries(propUsage)) {
+    const sortedUsage = sortByDesc(
+      Object.entries(propUsage),
+      ([, count]) => count
+    );
+    for (const [propName, usage] of sortedUsage) {
       print(
         "  " + styleNumber(usage.toString().padStart(maxDigits)),
         "  " + textMeter(compUsage, usage),

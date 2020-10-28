@@ -43,6 +43,10 @@ export function styleHeading(...args: any[]): string {
   return "\n" + chalk.cyan(...args);
 }
 
+export function styleTitle(...args: any[]): string {
+  return chalk.magenta(...args);
+}
+
 export const spinner = ora();
 
 // eslint-disable-next-line no-console
