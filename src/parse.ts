@@ -1,9 +1,26 @@
-const parser = require("@babel/parser");
-const traverse = require("@babel/traverse").default;
+// @ts-nocheck
+
+import parser from "@babel/parser";
+import {
+  StringLiteral,
+  JSXElement,
+  JSXFragment,
+  JSXExpressionContainer,
+  JSXIdentifier,
+  JSXMemberExpression,
+} from "@babel/types";
+import traverse from "@babel/traverse";
 
 const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
 
-function formatPropValue(value) {
+function formatPropValue(
+  value:
+    | StringLiteral
+    | JSXElement
+    | JSXFragment
+    | JSXExpressionContainer
+    | null
+): string | symbol {
   if (value === null) {
     return "true";
   }
@@ -25,7 +42,9 @@ function formatPropValue(value) {
 }
 
 function createProp(attributeNode) {
-  function getAttributeName(attributeNode) {
+  function getAttributeName(
+    attributeNode: JSXIdentifier | JSXMemberExpression
+  ) {
     switch (attributeNode.type) {
       case "JSXAttribute":
         return attributeNode.name.name;
@@ -39,7 +58,7 @@ function createProp(attributeNode) {
 }
 
 function createComponent(componentNode) {
-  function getDottedName(nameNode) {
+  function getDottedName(nameNode: JSXIdentifier | JSXMemberExpression) {
     switch (nameNode.type) {
       case "JSXMemberExpression":
         return [nameNode.object, nameNode.property]
@@ -89,9 +108,12 @@ function parse(code, options = {}) {
         for (const propNode of node.openingElement.attributes) {
           const propCode = code.slice(propNode.start, propNode.end);
           const propName = createProp(propNode);
-          const startLoc = propNode.loc.start;
-          const endLoc = propNode.loc.end;
-          const propValue = formatPropValue(propNode.value);
+          const startLoc = propNode.loc!.start;
+          const endLoc = propNode.loc!.end;
+          const propValue =
+            "value" in propNode
+              ? formatPropValue(propNode.value)
+              : formatPropValue(null);
           onProp({
             componentName,
             propName,

@@ -28,6 +28,7 @@
   "dependencies": {
     "@babel/parser": "^7.4.3",
     "@babel/traverse": "^7.4.3",
+    "@types/babel__traverse": "^7.0.15",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
     "cosmiconfig": "^5.2.1",
