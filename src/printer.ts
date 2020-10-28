@@ -25,7 +25,3 @@ export function textMeter(total: number, count: number): string {
   }
   return str;
 }
-
-export function heading(...args: any[]): void {
-  print("\n" + chalk.cyan(...args));
-}

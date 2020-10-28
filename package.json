@@ -5,7 +5,8 @@
   "main": "dist/src/api.js",
   "bin": "dist/src/jsx-info.js",
   "scripts": {
-    "preversion": "npm test && rm -rf dist && tsc",
+    "prepack": "rm -rf dist && tsc",
+    "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
     "start": "tsc --watch",
     "upgrade": "npm-check --update",

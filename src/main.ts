@@ -1,10 +1,18 @@
 import chalk from "chalk";
+import { Writable } from "stream";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { prompt } from "inquirer";
 import { Analysis, analyze, ReportType } from "./api";
 import { assertNever } from "./assertNever";
 import * as cli from "./cli";
-import { heading, print, spinner, textMeter } from "./printer";
+import { print, spinner, textMeter } from "./printer";
 import { sleep } from "./sleep";
+
+interface Answers {
+  components?: string[];
+  report?: ReportType;
+  prop?: string;
+}
 
 function sortByDesc<A, B>(array: A[], fn: (item: A) => B): A[] {
   return [...array].sort((a, b) => {
@@ -27,10 +35,12 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
   return array;
 }
 
-interface Answers {
-  components?: string[];
-  report?: ReportType;
-  prop?: string;
+function spawnPager(): ChildProcessWithoutNullStreams {
+  const p =
+    process.platform === "win32"
+      ? spawn("more", { stdio: ["pipe", "inherit", "inherit"] })
+      : spawn("less", ["-R"], { stdio: ["pipe", "inherit", "inherit"] });
+  return p as any; // TODO: What even
 }
 
 export async function main(): Promise<void> {
@@ -72,7 +82,7 @@ export async function main(): Promise<void> {
       type: "input",
       name: "prop",
       when({ report }) {
-        return report === "lines" || cli.report === "lines";
+        return (report === "lines" || cli.report === "lines") && !cli.prop;
       },
       validate(input: string) {
         return input.trim() !== "";
@@ -120,55 +130,69 @@ export async function main(): Promise<void> {
     },
   });
   spinner.stop();
-  reportTime(results);
+  const pager = spawnPager();
+  pager.on("disconnect", () => console.log("disconnect"));
+  pager.on("close", () => console.log("close"));
+  pager.on("error", () => console.log("error"));
+  pager.on("exit", () => console.log("exit"));
+  pager.on("message", () => console.log("message"));
+  reportTime(pager.stdin, results);
   if (report === "usage") {
-    reportComponentUsage(results);
+    reportComponentUsage(pager.stdin, results);
   } else if (report === "props") {
-    reportPropUsage(results);
+    reportPropUsage(pager.stdin, results);
   } else if (report === "lines") {
-    reportLinesUsage(results);
+    reportLinesUsage(pager.stdin, results);
   } else {
     assertNever(report);
   }
-  reportErrors(results);
+  reportErrors(pager.stdin, results);
+  // pager.stdin.end();
+  // pager.kill("INT");
 }
 
-function reportTime({ filenames, elapsedTime }: Analysis) {
-  print(
-    `Scanned ${filenames.length} files in ${elapsedTime.toFixed(1)} seconds`
+function reportTime(target: Writable, { filenames, elapsedTime }: Analysis) {
+  target.write(
+    `Scanned ${filenames.length} files in ${elapsedTime.toFixed(1)} seconds\n`
   );
 }
 
-function reportComponentUsage({
-  componentTotal,
-  componentUsageTotal,
-  componentUsage,
-}: Analysis) {
+function reportComponentUsage(
+  target: Writable,
+  { componentTotal, componentUsageTotal, componentUsage }: Analysis
+) {
   if (componentTotal === 0) {
     return;
   }
   const pairs = componentUsage;
   const maxDigits = getMaxDigits(Object.values(pairs));
-  heading(`${componentTotal} components used ${componentUsageTotal} times:`);
+  target.write(
+    chalk.cyan`\n${componentTotal} components used ${componentUsageTotal} times:\n`
+  );
   const sortedUsage = sortByDesc(Object.entries(pairs), ([, count]) => count);
   for (const [componentName, count] of sortedUsage) {
-    print(
-      "  " + chalk.bold(count.toString().padStart(maxDigits)),
-      "  " + textMeter(componentUsageTotal, count),
-      "  " + chalk.bold(`<${componentName}>`)
+    target.write(
+      [
+        "  " + chalk.bold(count.toString().padStart(maxDigits)),
+        "  " + textMeter(componentUsageTotal, count),
+        "  " + chalk.bold(`<${componentName}>`) + "\n",
+      ].join("")
     );
   }
 }
 
-function reportLinesUsage({ lineUsage }: Analysis) {
+function reportLinesUsage(target: Writable, { lineUsage }: Analysis) {
   for (const [componentName, props] of Object.entries(lineUsage)) {
     for (const data of Object.values(props)) {
       for (const lineData of data) {
         const { filename, startLoc, prettyCode } = lineData;
         const { line, column } = startLoc;
         const styledComponentName = chalk.bold(`<${componentName}>`);
-        heading(`${styledComponentName} ${filename}:${line}:${column}`);
-        print(prettyCode);
+        target.write(
+          chalk.cyan`\n${styledComponentName} ${filename}:${line}:${column}\n`
+        );
+        target.write(prettyCode);
+        target.write("\n");
       }
     }
   }
@@ -179,17 +203,20 @@ function getMaxDigits(iterable: Iterable<number>): number {
   return Math.max(4, ...[...iterable].map((n) => n.toString().length));
 }
 
-function reportPropUsage({ propUsage, componentUsage }: Analysis) {
+function reportPropUsage(
+  target: Writable,
+  { propUsage, componentUsage }: Analysis
+) {
   const propUsageByComponent = sortByDesc(
     Object.entries(propUsage),
     ([name]) => componentUsage[name]
   );
   for (const [componentName, propUsage] of propUsageByComponent) {
     const compUsage = componentUsage[componentName];
-    heading(
-      `${chalk.bold(`<${componentName}>`)} was used ${compUsage} ${
+    target.write(
+      `\n${chalk.bold(`<${componentName}>`)} was used ${compUsage} ${
         compUsage === 1 ? "time" : "times"
-      } with the following prop usage:`
+      } with the following prop usage:\n`
     );
     const maxDigits = getMaxDigits(Object.values(propUsage));
     const sortedUsage = sortByDesc(
@@ -197,31 +224,41 @@ function reportPropUsage({ propUsage, componentUsage }: Analysis) {
       ([, count]) => count
     );
     for (const [propName, usage] of sortedUsage) {
-      print(
-        "  " + chalk.bold(usage.toString().padStart(maxDigits)),
-        "  " + textMeter(compUsage, usage),
-        "  " + chalk.bold(propName)
+      target.write(
+        [
+          "  " + chalk.bold(usage.toString().padStart(maxDigits)),
+          "  " + textMeter(compUsage, usage),
+          "  " + chalk.bold(propName),
+          "\n",
+        ].join("")
       );
     }
   }
 }
 
-function reportErrors({ errors, suggestedPlugins }: Analysis) {
-  // const errorsCount = Object.keys(errors).length;
-  const errorsCount = 1;
+function reportErrors(
+  target: Writable,
+  { errors, suggestedPlugins }: Analysis
+) {
+  const errorsCount = Object.keys(errors).length;
   if (errorsCount) {
-    print("\n" + errorsCount, "parse", errorsCount === 1 ? "error" : "errors");
+    target.write(
+      "\n" + errorsCount + " parse " + (errorsCount === 1 ? "error" : "errors")
+    );
     for (const [filename, error] of Object.entries(errors)) {
       const { loc, message } = error;
       const { line, column } = loc;
-      print(`  ${filename}:${line}:${column}`, chalk.bold.red(message));
+      target.write(
+        `  ${filename}:${line}:${column}` + chalk.bold.red(message) + "\n"
+      );
     }
-    suggestedPlugins.push("foo", "bar");
     if (suggestedPlugins.length > 0) {
-      print("\nTry adding these Babel plugins as arguments:");
-      print(
-        chalk.bold.cyan("    --babel-plugins"),
-        suggestedPlugins.map((s) => chalk.underline.magenta(s)).join(" ")
+      target.write("\nTry adding these Babel plugins as arguments:\n");
+      target.write(
+        chalk.bold.cyan("    --babel-plugins") +
+          " " +
+          suggestedPlugins.map((s) => chalk.underline.magenta(s)).join(" ") +
+          "\n"
       );
     }
   }
