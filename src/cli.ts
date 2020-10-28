@@ -11,32 +11,22 @@ program.name("jsx-info");
 program.version(version, "-v, --version");
 program
   .description("Displays a report of JSX component and prop usage")
-  .option("--no-progress", "do not show progress messages")
-  // NOTE: chalk automatically reads process.argv for these flags, and commander
-  // does not correctly handle allowing both "--foo" and "--no-foo" flags
-  //
-  // https://github.com/tj/commander.js/issues/108
+  .option("--no-progress", "don't show progress messages")
   .option("--components <components...>", "which components to scan")
   .option("--color", "force enable color")
   .option("--no-color", "force disable color")
   .option("--no-config", "disable config file")
   .option("--no-gitignore", "disable reading .gitignore files")
-  .option("--babel-plugins <plugins...>", "adds a Babel plugin")
+  .option("--babel-plugins <plugins...>", "set Babel plugins")
   .option(
     "--directory <directory>",
-    "directory to use as the base for finding files instead of cwd"
+    "directory to use as the base for finding files"
   )
+  .option("--ignore <patterns...>", "glob patterns used to ignore input files")
+  .option("--files <patterns...>", "glob patterns used to find input files")
+  .option("--report <usage|props|lines>", "which report to show")
   .option(
-    "--ignore <patterns...>",
-    "adds a glob pattern used to ignore input files"
-  )
-  .option(
-    "--files <patterns...>",
-    "glob pattern used to find input files (repeatable)"
-  )
-  .option("--report <usage|props|lines>", "specify which report to show")
-  .option(
-    "--prop <prop>",
+    "--prop <prop[=value]>",
     "which prop to search for when running a lines report"
   );
 
@@ -99,7 +89,7 @@ function getConfig() {
       return result.config;
     }
   } catch (err) {
-    if (process.env.DEBUG === "true") {
+    if (process.env.DEBUG) {
       // eslint-disable-next-line no-console
       console.log(err.stack);
     }
