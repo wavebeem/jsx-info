@@ -45,11 +45,6 @@ program
     listOption
   )
   .option(
-    "--sort <alphabetical|usage>",
-    "specify sort type of the report",
-    /^(alphabetical|usage)$/i
-  )
-  .option(
     "--report <usage|props|lines>",
     "specify reports to show (repeatable)",
     listOption

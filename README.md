@@ -98,7 +98,7 @@ way I can make this tool better is by getting feedback from users.
 
 ## License
 
-Copyright © [Brian Mock][] under the [MIT License][].
+Copyright &copy; [Brian Mock][] under the [MIT License][].
 
 [brian mock]: https://www.wavebeem.com
 [demonstration]: https://youtu.be/e_vtfYJW9aM
