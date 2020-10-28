@@ -1,4 +1,7 @@
-import { Analysis, analyze } from "./api";
+import { prompt } from "inquirer";
+import { version } from "../package.json";
+import { Analysis, analyze, ReportType } from "./api";
+import { assertNever } from "./assertNever";
 import * as cli from "./cli";
 import {
   print,
@@ -12,19 +15,76 @@ import {
 } from "./printer";
 import { sleep } from "./sleep";
 
-export async function main() {
-  if (!cli.prop && cli.report.includes("lines")) {
-    throw new Error("`--prop` argument required for `lines` report");
+function fallbackArray<T>(array: T[], fallback: T[]): T[] {
+  if (array.length === 0) {
+    return fallback;
   }
+  return array;
+}
+
+export async function main() {
+  print(styleHeading(`jsx-info ${version} by @wavebeem`));
+  print("");
+  const answers = await prompt([
+    {
+      type: "input",
+      name: "components",
+      when: cli.components.length === 0,
+      filter(input) {
+        input = input.trim();
+        if (input === "") {
+          return [];
+        }
+        return input.split(/\s+/);
+      },
+      message: "Which components (space separated, leave empty to scan all)",
+    },
+    {
+      type: "list",
+      name: "report",
+      when: !cli.report,
+      message: "Which report",
+      choices: [
+        { value: "usage", name: "[usage] Total component usage" },
+        { value: "props", name: "[props] Total props usage" },
+        {
+          value: "lines",
+          name: "[lines] Show lines where certain props are used",
+        },
+      ],
+    },
+    {
+      type: "input",
+      name: "prop",
+      when({ reports }) {
+        return reports === "lines" || cli.report === "lines";
+      },
+      validate(input) {
+        return input.trim() !== "";
+      },
+      filter(input) {
+        return input.trim();
+      },
+      message: "Which prop (e.g. `id` or `variant=primary`)",
+    },
+  ]);
+  const cliComponents =
+    cli.components.length === 1 && cli.components[0] === "*"
+      ? []
+      : cli.components;
+  const components: string[] = answers.components || cliComponents;
+  const prop: string = answers.prop || cli.prop;
+  const report: ReportType = answers.report || cli.report || "usage";
+  const files: string[] = fallbackArray(cli.files, ["**/*.{js,jsx,tsx}"]);
   const results = await analyze({
+    components,
+    files,
+    prop,
+    report,
     babelPlugins: cli.babelPlugins,
-    components: cli.components,
     directory: cli.directory,
-    files: cli.files,
     gitignore: cli.gitignore,
     ignore: cli.ignore,
-    prop: cli.prop,
-    report: cli.report,
     async onFile(filename) {
       if (cli.showProgress) {
         spinner.text = `Scanning files\n\n${filename}`;
@@ -40,18 +100,19 @@ export async function main() {
       }
     },
   });
+  spinner.stop();
+  console.log();
   reportTime(results);
-  if (cli.report.includes("usage")) {
+  if (report === "usage") {
     reportComponentUsage(results);
-  }
-  if (cli.report.includes("props")) {
+  } else if (report === "props") {
     reportPropUsage(results);
-  }
-  if (cli.report.includes("lines")) {
+  } else if (report === "lines") {
     reportLinesUsage(results);
+  } else {
+    assertNever(report);
   }
   reportErrors(results);
-  spinner.stop();
 }
 
 function reportTime({ filenames, elapsedTime }: Analysis) {

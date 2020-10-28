@@ -44,53 +44,44 @@ program
     "glob pattern used to find input files (repeatable)",
     listOption
   )
-  .option(
-    "--report <usage|props|lines>",
-    "specify reports to show (repeatable)",
-    listOption
-  )
+  .option("--report <usage|props|lines>", "specify which report to show")
   .option(
     "--prop <PROP>",
-    "which prop to search for when running `--report lines`"
+    "which prop to search for when running a lines report"
   );
 
 program.on("--help", () => {
   print(`
 Examples:
-  # Display info for every component
-  $ npx jsx-info
+  Use jsx-info interactively:
+      npx jsx-info
 
-  # Display info only for <div> and <Tab.Container>
-  $ npx jsx-info div Tab.Container
+  Display info only for <div> and <Tab.Container>
+      npx jsx-info div Tab.Container
 
-  # See lines where className prop was used on div component
-  $ npx jsx-info --report lines --prop className div
+  See lines where className prop was used on div component
+      npx jsx-info --report lines --prop className div
 
-  # See lines where \`id\` prop was used on any component
-  $ npx jsx-info --report lines --prop id
+  See lines where \`id\` prop was used on any component
+      npx jsx-info --report lines --prop id "*"
 
-  # See lines where kind prop was used with value "primary" on Button component
-  $ npx jsx-info --report lines --prop kind=primary Button
+  See lines where kind prop was used with value "primary" on Button component
+      npx jsx-info --report lines --prop kind=primary Button
 
-  # Ignore any folder named at any depth named \`__test__\`,
-  # as well as \`packages/legacy\`
-  $ npx jsx-info --ignore '**/__test__' --ignore packages/legacy
+  Ignore any folder named at any depth named \`__test__\`,
+  as well as \`packages/legacy\`
+      npx jsx-info --ignore '**/__test__' --ignore packages/legacy
 
-  # Enable Babel plugins
-  $ npx jsx-info --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
+  Enable Babel plugins
+      npx jsx-info --add-babel-plugin decorators-legacy --add-babel-plugin pipelineOperator
 
-  # Example .jsx-info.json config file
-  {
-    "babelPlugins": ["decorators-legacy", "pipelineOperator"],
-    "directory": "src",
-    "ignore": ["**/__test__", "legacy/**"],
-    "files": ["**/*.{js,jsx,tsx}"]
-  }
-
-  # Find <Button kind="primary">
-  $ npx jsx-info --report lines --prop kind=primary Button
-
-Full documentation can be found at https://github.com/wavebeem/jsx-info
+  Example .jsx-info.json config file
+      {
+        "babelPlugins": ["decorators-legacy", "pipelineOperator"],
+        "directory": "src",
+        "ignore": ["**/__test__", "legacy/**"],
+        "files": ["**/*.{js,jsx,tsx}"]
+      }
 `);
 });
 
@@ -138,11 +129,5 @@ export const babelPlugins: ParserPlugin[] = concat(
 export const directory: string = program.directory || config.directory;
 export const gitignore: boolean = program.gitignore;
 export const ignore: string[] = concat(program.ignore, config.ignore);
-export const files: string[] = (() => {
-  const f = concat<string>(program.files, config.files);
-  if (f.length === 0) {
-    return ["**/*.{js,jsx,tsx}"];
-  }
-  return f;
-})();
-export const report: ReportType[] = program.report || ["usage", "props"];
+export const files: string[] = concat<string>(program.files, config.files);
+export const report: ReportType = program.report;

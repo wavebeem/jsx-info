@@ -16,7 +16,7 @@ export interface AnalyzeOptions {
   onFile?: (filename: string) => Promise<void>;
   onStart?: () => Promise<void>;
   prop?: string;
-  report?: ReportType[];
+  report?: ReportType;
 }
 
 export interface SourceLocation {
@@ -65,9 +65,9 @@ export async function analyze({
   onFile,
   onStart,
   prop,
-  report = ["usage", "props"],
+  report,
 }: AnalyzeOptions): Promise<Analysis> {
-  if (!prop && report.includes("lines")) {
+  if (!prop && report === "lines") {
     throw new Error("`prop` option required for `lines` report");
   }
   const timeStart = Date.now();
