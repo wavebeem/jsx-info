@@ -36,13 +36,19 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
   return array;
 }
 
+interface Answers {
+  components?: string[];
+  report?: ReportType;
+  prop?: string;
+}
+
 export async function main() {
-  const answers = await prompt([
+  const answers = await prompt<Answers>([
     {
       type: "input",
       name: "components",
       when: cli.components.length === 0,
-      filter(input) {
+      filter(input: string) {
         input = input.trim();
         if (input === "") {
           return [];
@@ -71,10 +77,10 @@ export async function main() {
       when({ report }) {
         return report === "lines" || cli.report === "lines";
       },
-      validate(input) {
+      validate(input: string) {
         return input.trim() !== "";
       },
-      filter(input) {
+      filter(input: string) {
         return input.trim();
       },
       message: "Which prop (e.g. `id` or `variant=primary`) [--prop]",
