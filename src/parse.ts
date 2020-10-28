@@ -1,4 +1,4 @@
-import { ParserPlugin, parse as babelParse } from "@babel/parser";
+import { parse as babelParse, ParserPlugin } from "@babel/parser";
 import traverse from "@babel/traverse";
 import { JSXElement, Node } from "@babel/types";
 import { SourceLocation } from "./api";

@@ -1,10 +1,10 @@
-import path from "path";
+import { ParserPlugin } from "@babel/parser";
 import program from "commander";
 import cosmiconfig from "cosmiconfig";
-import pkg from "../package.json";
+import path from "path";
+import { version } from "../package.json";
+import { ReportType } from "./api";
 import { print, printError } from "./printer";
-import { ReportType, SortType } from "./api";
-import { ParserPlugin } from "@babel/parser";
 
 function listOption<T>(x: T, acc: T[] = []): T[] {
   acc.push(x);
@@ -12,7 +12,7 @@ function listOption<T>(x: T, acc: T[] = []): T[] {
 }
 
 program.name("jsx-info");
-program.version(pkg.version, "-v, --version");
+program.version(version, "-v, --version");
 program
   .arguments("[components...]")
   .description("Displays a report of JSX component and prop usage")
@@ -150,5 +150,4 @@ export const files: string[] = (() => {
   }
   return f;
 })();
-export const sort: SortType = program.sort || "usage";
-export const report: ReportType = program.report || ["usage", "props"];
+export const report: ReportType[] = program.report || ["usage", "props"];

@@ -4,7 +4,6 @@ import globby from "globby";
 import { parse } from "./parse";
 import { sleep } from "./sleep";
 
-export type SortType = "usage" | "alphabetical";
 export type ReportType = "usage" | "props" | "lines";
 
 export interface AnalyzeOptions {
@@ -18,7 +17,6 @@ export interface AnalyzeOptions {
   onStart?: () => Promise<void>;
   prop?: string;
   report?: ReportType[];
-  sort?: SortType;
 }
 
 export interface SourceLocation {

@@ -1,3 +1,8 @@
+# v2.0.0
+
+- Adds a full JS API for library usage
+- Removes the `--sort <...>` flag
+
 # v1.6.1
 
 - Crash fix

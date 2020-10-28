@@ -1,6 +1,6 @@
-import cli from "./cli";
-import * as printer from "./printer";
 import { Analysis, analyze } from "./api";
+import * as cli from "./cli";
+import * as printer from "./printer";
 import { sleep } from "./sleep";
 
 export async function main() {
@@ -16,7 +16,6 @@ export async function main() {
     ignore: cli.ignore,
     prop: cli.prop,
     report: cli.report,
-    sort: cli.sort,
     async onFile(filename) {
       if (cli.showProgress) {
         printer.spinner.text = `Scanning files\n\n${filename}`;
@@ -77,7 +76,6 @@ function reportComponentUsage({
 }
 
 function reportLinesUsage({ lineUsage }: Analysis) {
-  // TODO: Does it make sense to sort the output here somehow?
   for (const [componentName, props] of Object.entries(lineUsage)) {
     for (const data of Object.values(props)) {
       for (const lineData of data) {
