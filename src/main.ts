@@ -1,17 +1,9 @@
+import chalk from "chalk";
 import { prompt } from "inquirer";
 import { Analysis, analyze, ReportType } from "./api";
 import { assertNever } from "./assertNever";
 import * as cli from "./cli";
-import {
-  print,
-  spinner,
-  styleComponentName,
-  styleError,
-  styleHeading,
-  styleNumber,
-  stylePropName,
-  textMeter,
-} from "./printer";
+import { heading, print, spinner, textMeter } from "./printer";
 import { sleep } from "./sleep";
 
 function sortByDesc<A, B>(array: A[], fn: (item: A) => B): A[] {
@@ -157,17 +149,13 @@ function reportComponentUsage({
   }
   const pairs = componentUsage;
   const maxDigits = getMaxDigits(Object.values(pairs));
-  print(
-    styleHeading(
-      `${componentTotal} components used ${componentUsageTotal} times:`
-    )
-  );
+  heading(`${componentTotal} components used ${componentUsageTotal} times:`);
   const sortedUsage = sortByDesc(Object.entries(pairs), ([, count]) => count);
   for (const [componentName, count] of sortedUsage) {
     print(
-      "  " + styleNumber(count.toString().padStart(maxDigits)),
+      "  " + chalk.bold(count.toString().padStart(maxDigits)),
       "  " + textMeter(componentUsageTotal, count),
-      "  " + styleComponentName(componentName)
+      "  " + chalk.bold(`<${componentName}>`)
     );
   }
 }
@@ -178,10 +166,8 @@ function reportLinesUsage({ lineUsage }: Analysis) {
       for (const lineData of data) {
         const { filename, startLoc, prettyCode } = lineData;
         const { line, column } = startLoc;
-        const styledComponentName = styleComponentName(componentName);
-        print(
-          styleHeading(`${styledComponentName} ${filename}:${line}:${column}`)
-        );
+        const styledComponentName = chalk.bold(`<${componentName}>`);
+        heading(`${styledComponentName} ${filename}:${line}:${column}`);
         print(prettyCode);
       }
     }
@@ -200,12 +186,10 @@ function reportPropUsage({ propUsage, componentUsage }: Analysis) {
   );
   for (const [componentName, propUsage] of propUsageByComponent) {
     const compUsage = componentUsage[componentName];
-    print(
-      styleHeading(
-        `${styleComponentName(componentName)} was used ${compUsage} ${
-          compUsage === 1 ? "time" : "times"
-        } with the following prop usage:`
-      )
+    heading(
+      `${chalk.bold(`<${componentName}>`)} was used ${compUsage} ${
+        compUsage === 1 ? "time" : "times"
+      } with the following prop usage:`
     );
     const maxDigits = getMaxDigits(Object.values(propUsage));
     const sortedUsage = sortByDesc(
@@ -214,33 +198,31 @@ function reportPropUsage({ propUsage, componentUsage }: Analysis) {
     );
     for (const [propName, usage] of sortedUsage) {
       print(
-        "  " + styleNumber(usage.toString().padStart(maxDigits)),
+        "  " + chalk.bold(usage.toString().padStart(maxDigits)),
         "  " + textMeter(compUsage, usage),
-        "  " + stylePropName(propName)
+        "  " + chalk.bold(propName)
       );
     }
   }
-  print(`
-Tip: Want to see where the className prop was used on the <div> component?
-
-npx jsx-info --report lines --prop className div
-`);
 }
 
 function reportErrors({ errors, suggestedPlugins }: Analysis) {
-  const errorsCount = Object.keys(errors).length;
+  // const errorsCount = Object.keys(errors).length;
+  const errorsCount = 1;
   if (errorsCount) {
     print("\n" + errorsCount, "parse", errorsCount === 1 ? "error" : "errors");
     for (const [filename, error] of Object.entries(errors)) {
       const { loc, message } = error;
       const { line, column } = loc;
-      print(`  ${filename}:${line}:${column}`, styleError(message));
+      print(`  ${filename}:${line}:${column}`, chalk.bold.red(message));
     }
+    suggestedPlugins.push("foo", "bar");
     if (suggestedPlugins.length > 0) {
-      print("Try adding at least one of the following options:");
-      for (const plugin of suggestedPlugins) {
-        print("  --add-babel-plugin", plugin);
-      }
+      print("\nTry adding these Babel plugins as arguments:");
+      print(
+        chalk.bold.cyan("    --babel-plugins"),
+        suggestedPlugins.map((s) => chalk.underline.magenta(s)).join(" ")
+      );
     }
   }
 }

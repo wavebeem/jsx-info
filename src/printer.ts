@@ -1,22 +1,6 @@
 import chalk from "chalk";
 import ora from "ora";
 
-export function styleComponentName(componentName: string): string {
-  return chalk.bold("<" + componentName + ">");
-}
-
-export function stylePropName(propName: string): string {
-  return chalk.bold(propName);
-}
-
-export function styleNumber(number: string): string {
-  return chalk.bold(number);
-}
-
-export function styleError(errorMessage: string): string {
-  return chalk.bold.red(errorMessage);
-}
-
 const CHAR_BOX_FULL = chalk.bold.green("*");
 const CHAR_BOX_LIGHT = chalk.bold.red("-");
 
@@ -34,12 +18,8 @@ export function textMeter(total: number, count: number): string {
   return str;
 }
 
-export function styleHeading(...args: any[]): string {
+export function heading(...args: any[]): string {
   return "\n" + chalk.cyan(...args);
-}
-
-export function styleTitle(...args: any[]): string {
-  return chalk.magenta.bold(...args);
 }
 
 export const spinner = ora();

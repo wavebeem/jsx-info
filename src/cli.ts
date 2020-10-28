@@ -5,7 +5,7 @@ import { cosmiconfigSync } from "cosmiconfig";
 import path from "path";
 import { version } from "../package.json";
 import { ReportType } from "./api";
-import { print, printError, styleTitle } from "./printer";
+import { print, printError } from "./printer";
 
 program.name("jsx-info");
 program.version(version, "-v, --version");
@@ -76,7 +76,7 @@ Examples:
 
 program.parse(process.argv);
 
-print(styleTitle(`jsx-info ${version} by @wavebeem`));
+print(chalk.magenta.bold(`jsx-info ${version} by @wavebeem`));
 
 function getConfig() {
   if (!program.config) {
