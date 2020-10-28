@@ -10,7 +10,6 @@ import {
   styleHeading,
   styleNumber,
   stylePropName,
-  styleTitle,
   textMeter,
 } from "./printer";
 import { sleep } from "./sleep";
