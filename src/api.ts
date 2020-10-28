@@ -23,18 +23,6 @@ interface AnalyzeOptions {
   sort?: SortType;
 }
 
-interface ComponentProp {
-  componentName: ComponentName;
-  propName: PropName;
-  propCode: string;
-  prettyCode: string;
-  startLoc: SourceLocation;
-  endLoc: SourceLocation;
-  filename: Filename;
-  usage: number;
-  lines: LineInfo[];
-}
-
 interface SourceLocation {
   line: number;
   column: number;
@@ -46,11 +34,6 @@ interface ErrorInfo {
   missingPlugin: string[];
 }
 
-interface LinePropUsage {
-  usage: number;
-  lines: LineInfo[];
-}
-
 interface LineInfo {
   propCode: string;
   prettyCode: string;
@@ -60,7 +43,7 @@ interface LineInfo {
 }
 
 type PropUsage = Record<ComponentName, Record<PropName, number>>;
-type LineUsage = Record<ComponentName, Record<PropName, LinePropUsage>>;
+type LineUsage = Record<ComponentName, Record<PropName, LineInfo[]>>;
 type ComponentUsage = Record<ComponentName, number>;
 
 interface Analysis {
@@ -68,7 +51,7 @@ interface Analysis {
   componentTotal: number;
   componentUsageTotal: number;
   componentUsage: ComponentUsage;
-  // propUsage: PropUsage;
+  propUsage: PropUsage;
   lineUsage: LineUsage;
   errors: Record<Filename, ErrorInfo>;
   suggestedPlugins: string[];
@@ -144,16 +127,12 @@ export async function analyze({
             }
           }
           const prettyCode = formatPrettyCode(code, startLoc.line, endLoc.line);
-          reporter.addProp({
-            componentName,
-            propName,
+          reporter.addProp(componentName, propName, {
             propCode,
             startLoc,
             endLoc,
             prettyCode,
             filename,
-            usage: 0,
-            lines: [],
           });
         },
       });
@@ -171,14 +150,15 @@ export async function analyze({
     componentTotal: reporter.getComponentTotal(),
     componentUsageTotal: reporter.getComponentUsageTotal(),
     componentUsage: reporter.components,
-    lineUsage: reporter.componentProps,
+    propUsage: reporter.props,
+    lineUsage: reporter.lines,
     errors: reporter.errors,
     suggestedPlugins: reporter.suggestedPlugins,
     elapsedTime: elapsedTime,
   };
 }
 
-const linesCache = new Map();
+const linesCache = new Map<string, string[]>();
 
 function getLines(code: string): string[] {
   let lines = linesCache.get(code);
@@ -212,7 +192,8 @@ function formatPrettyCode(
 
 class Reporter {
   components: ComponentUsage = {};
-  componentProps: Record<string, Record<string, ComponentProp>> = {};
+  props: PropUsage = {};
+  lines: LineUsage = {};
   suggestedPlugins: string[] = [];
   errors: Record<Filename, ErrorInfo> = {};
 
@@ -230,19 +211,30 @@ class Reporter {
     this.components[componentName] = (this.components[componentName] || 0) + 1;
   }
 
-  addProp(newProp: ComponentProp) {
-    const props = this.componentProps[newProp.componentName] || {};
-    const prop = props[newProp.propName] || newProp;
-    prop.usage++;
-    prop.lines.push({
-      propCode: newProp.propCode,
-      prettyCode: newProp.prettyCode,
-      startLoc: newProp.startLoc,
-      endLoc: newProp.endLoc,
-      filename: newProp.filename,
-    });
-    props[newProp.propName] = prop;
-    this.componentProps[newProp.componentName] = props;
+  private _incrementProp(
+    componentName: ComponentName,
+    propName: PropName
+  ): void {
+    if (!this.props[componentName]) {
+      this.props[componentName] = {};
+    }
+    const count = this.props[componentName][propName] || 0;
+    this.props[componentName][propName] = count + 1;
+  }
+
+  private _ensureLines(componentName: ComponentName, propName: PropName): void {
+    if (!this.lines[componentName]) {
+      this.lines[componentName] = {};
+    }
+    if (!this.lines[componentName][propName]) {
+      this.lines[componentName][propName] = [];
+    }
+  }
+
+  addProp(componentName: ComponentName, propName: PropName, line: LineInfo) {
+    this._incrementProp(componentName, propName);
+    this._ensureLines(componentName, propName);
+    this.lines[componentName][propName].push(line);
   }
 
   getComponentTotal(): number {
@@ -253,12 +245,3 @@ class Reporter {
     return Object.values(this.components).reduce((a, b) => a + b, 0);
   }
 }
-
-(async function() {
-  try {
-    const result = await analyze({});
-    console.log(JSON.stringify(result, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-})();

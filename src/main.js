@@ -52,8 +52,11 @@ function reportTime({ filenames, elapsedTime }) {
   );
 }
 
-function reportComponentUsage({ totals, componentUsage }) {
-  const { componentTotal, componentUsageTotal } = totals;
+function reportComponentUsage({
+  componentTotal,
+  componentUsageTotal,
+  componentUsage,
+}) {
   if (componentTotal === 0) {
     return;
   }
@@ -77,7 +80,7 @@ function reportLinesUsage({ lineUsage }) {
   // TODO: Does it make sense to sort the output here somehow?
   for (const [componentName, props] of Object.entries(lineUsage)) {
     for (const data of Object.values(props)) {
-      for (const lineData of data.lines) {
+      for (const lineData of data) {
         const { filename, startLoc, prettyCode } = lineData;
         const { line, column } = startLoc;
         const styledComponentName = printer.styleComponentName(componentName);
