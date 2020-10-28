@@ -28,7 +28,7 @@ class Reporter {
           return -1;
         }
         return 0;
-      }
+      },
     };
     entries.sort(sortTypes[this._sortType]);
     return Object.fromEntries(entries);
@@ -48,11 +48,19 @@ class Reporter {
       (this._components[componentName] || 0) + 1;
   }
 
-  addProp({ componentName, propName, prettyCode, startLoc, endLoc, filename }) {
+  addProp({
+    componentName,
+    propName,
+    propCode,
+    prettyCode,
+    startLoc,
+    endLoc,
+    filename,
+  }) {
     const props = this._componentProps[componentName] || {};
     const prop = props[propName] || { usage: 0, lines: [] };
     prop.usage++;
-    prop.lines.push({ prettyCode, startLoc, endLoc, filename });
+    prop.lines.push({ propCode, prettyCode, startLoc, endLoc, filename });
     props[propName] = prop;
     this._componentProps[componentName] = props;
   }
