@@ -42,19 +42,25 @@ interface Answers {
 }
 
 export async function main(): Promise<void> {
+  if (cli.report && !["usage", "props", "lines"].includes(cli.report)) {
+    throw new Error(
+      `jsx-info: invalid report: ${cli.report} (expected: usage | props | lines)`
+    );
+  }
   const answers = await prompt<Answers>([
     {
       type: "input",
       name: "components",
-      when: cli.components.length === 0,
+      when: !cli.components,
+      default: "*",
       filter(input: string) {
         input = input.trim();
         if (input === "") {
-          return [];
+          return ["*"];
         }
         return input.split(/\s+/);
       },
-      message: "Which components (space separated, leave empty to scan all)",
+      message: "Which components (space separated, * = all)",
     },
     {
       type: "list",
@@ -85,11 +91,15 @@ export async function main(): Promise<void> {
       message: "Which prop (e.g. `id` or `variant=primary`) [--prop]",
     },
   ]);
-  const cliComponents =
-    cli.components.length === 1 && cli.components[0] === "*"
-      ? []
-      : cli.components;
-  const components: string[] = answers.components || cliComponents;
+  if (Object.keys(answers).length > 0) {
+    print();
+  }
+  const components: string[] = ((comp) => {
+    if (comp && comp.length == 1 && comp[0] == "*") {
+      return [];
+    }
+    return comp;
+  })(answers.components || cli.components);
   const prop: string = answers.prop || cli.prop;
   const report: ReportType = answers.report || cli.report || "usage";
   const files: string[] = fallbackArray(cli.files, ["**/*.{js,jsx,tsx}"]);
@@ -118,7 +128,6 @@ export async function main(): Promise<void> {
     },
   });
   spinner.stop();
-  print();
   reportTime(results);
   if (report === "usage") {
     reportComponentUsage(results);
