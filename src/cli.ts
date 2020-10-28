@@ -1,11 +1,12 @@
-const path = require("path");
-const program = require("commander");
-const cosmiconfig = require("cosmiconfig");
+import path from "path";
+import program from "commander";
+import cosmiconfig from "cosmiconfig";
+import pkg from "../package.json";
+import { print, printError } from "./printer";
+import { ReportType, SortType } from "./api";
+import { ParserPlugin } from "@babel/parser";
 
-const pkg = require("../package.json");
-const { print, printError } = require("./printer");
-
-function listOption(x, acc = []) {
+function listOption<T>(x: T, acc: T[] = []): T[] {
   acc.push(x);
   return acc;
 }
@@ -128,20 +129,26 @@ function getConfig() {
 
 const config = getConfig();
 
-function concat(a, b) {
-  return [...(a || []), ...(b || [])];
+function concat<T>(a: T[] = [], b: T[] = []): T[] {
+  return [...a, ...b];
 }
 
-exports.prop = program.prop;
-exports.components = program.args;
-exports.showProgress = program.progress;
-exports.babelPlugins = concat(config.babelPlugins, program.addBabelPlugin);
-exports.directory = program.directory || config.directory;
-exports.gitignore = program.gitignore;
-exports.ignore = concat(program.ignore, config.ignore);
-exports.files = concat(program.files, config.files);
-if (exports.files.length === 0) {
-  exports.files = ["**/*.{js,jsx,tsx}"];
-}
-exports.sort = program.sort || "usage";
-exports.report = program.report || ["usage", "props"];
+export const prop: string = program.prop;
+export const components: string[] = program.args;
+export const showProgress: boolean = program.progress;
+export const babelPlugins: ParserPlugin[] = concat(
+  config.babelPlugins,
+  program.addBabelPlugin
+);
+export const directory: string = program.directory || config.directory;
+export const gitignore: boolean = program.gitignore;
+export const ignore: string[] = concat(program.ignore, config.ignore);
+export const files: string[] = (() => {
+  const f = concat<string>(program.files, config.files);
+  if (f.length === 0) {
+    return ["**/*.{js,jsx,tsx}"];
+  }
+  return f;
+})();
+export const sort: SortType = program.sort || "usage";
+export const report: ReportType = program.report || ["usage", "props"];

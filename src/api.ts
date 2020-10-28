@@ -4,11 +4,8 @@ import globby from "globby";
 import { parse } from "./parse";
 import { sleep } from "./sleep";
 
-type SortType = "usage" | "alphabetical";
-type ReportType = "usage" | "props" | "lines";
-type Filename = string;
-type PropName = string;
-type ComponentName = string;
+export type SortType = "usage" | "alphabetical";
+export type ReportType = "usage" | "props" | "lines";
 
 export interface AnalyzeOptions {
   babelPlugins?: ParserPlugin[];
@@ -41,21 +38,21 @@ export interface LineInfo {
   prettyCode: string;
   startLoc: SourceLocation;
   endLoc: SourceLocation;
-  filename: Filename;
+  filename: string;
 }
 
-export type PropUsage = Record<ComponentName, Record<PropName, number>>;
-export type LineUsage = Record<ComponentName, Record<PropName, LineInfo[]>>;
-export type ComponentUsage = Record<ComponentName, number>;
+export type PropUsage = Record<string, Record<string, number>>;
+export type LineUsage = Record<string, Record<string, LineInfo[]>>;
+export type ComponentUsage = Record<string, number>;
 
 export interface Analysis {
-  filenames: Filename[];
+  filenames: string[];
   componentTotal: number;
   componentUsageTotal: number;
   componentUsage: ComponentUsage;
   propUsage: PropUsage;
   lineUsage: LineUsage;
-  errors: Record<Filename, ErrorInfo>;
+  errors: Record<string, ErrorInfo>;
   suggestedPlugins: string[];
   elapsedTime: number;
 }
@@ -196,10 +193,10 @@ class Reporter {
   props: PropUsage = {};
   lines: LineUsage = {};
   suggestedPlugins: string[] = [];
-  errors: Record<Filename, ErrorInfo> = {};
+  errors: Record<string, ErrorInfo> = {};
 
   // TODO: Does Babel expose the actual error type for us?
-  addParseError(filename: Filename, error: any): void {
+  addParseError(filename: string, error: any): void {
     this.errors[filename] = {
       message: error.message,
       pos: error.pos,
@@ -213,14 +210,11 @@ class Reporter {
     }
   }
 
-  addComponent(componentName: ComponentName): void {
+  addComponent(componentName: string): void {
     this.components[componentName] = (this.components[componentName] || 0) + 1;
   }
 
-  private _incrementProp(
-    componentName: ComponentName,
-    propName: PropName
-  ): void {
+  private _incrementProp(componentName: string, propName: string): void {
     if (!this.props[componentName]) {
       this.props[componentName] = {};
     }
@@ -228,7 +222,7 @@ class Reporter {
     this.props[componentName][propName] = count + 1;
   }
 
-  private _ensureLines(componentName: ComponentName, propName: PropName): void {
+  private _ensureLines(componentName: string, propName: string): void {
     if (!this.lines[componentName]) {
       this.lines[componentName] = {};
     }
@@ -237,7 +231,7 @@ class Reporter {
     }
   }
 
-  addProp(componentName: ComponentName, propName: PropName, line: LineInfo) {
+  addProp(componentName: string, propName: string, line: LineInfo) {
     this._incrementProp(componentName, propName);
     this._ensureLines(componentName, propName);
     this.lines[componentName][propName].push(line);
