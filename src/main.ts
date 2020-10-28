@@ -41,7 +41,7 @@ interface Answers {
   prop?: string;
 }
 
-export async function main() {
+export async function main(): Promise<void> {
   const answers = await prompt<Answers>([
     {
       type: "input",
@@ -118,7 +118,7 @@ export async function main() {
     },
   });
   spinner.stop();
-  console.log();
+  print();
   reportTime(results);
   if (report === "usage") {
     reportComponentUsage(results);

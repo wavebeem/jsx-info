@@ -9,7 +9,7 @@
     "postversion": "git push && git push --tags && npm publish",
     "start": "tsc --watch",
     "upgrade": "npm-check --update",
-    "test": "eslint src --ext .js,.ts && prettier --list-different \"src/**/*.{js,ts}\""
+    "test": "eslint src --ext .js,.ts --format unix && prettier --check \"src/**/*.{js,ts}\""
   },
   "repository": {
     "type": "git",
@@ -26,20 +26,23 @@
   "author": "Brian Mock <brian@wavebeem.com>",
   "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.4.3",
-    "@babel/traverse": "^7.4.3",
+    "@babel/parser": "^7.12.3",
+    "@babel/traverse": "^7.12.1",
     "@types/babel__traverse": "^7.0.15",
     "@types/inquirer": "^7.3.1",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
     "cosmiconfig": "^5.2.1",
     "globby": "^9.2.0",
+    "inquirer": "^7.3.3",
     "ora": "^3.4.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "npm-check": "^5.9.0",
-    "prettier": "^1.17.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "npm-check": "^5.9.2",
+    "prettier": "^2.1.2",
     "typescript": "^4.0.5"
   }
 }

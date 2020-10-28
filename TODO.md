@@ -1,3 +1,4 @@
+- Upgrade packages
 - Add pagination for long output
 - Docs for API?
 - Release it

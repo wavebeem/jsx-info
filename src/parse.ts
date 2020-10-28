@@ -75,7 +75,7 @@ interface ParseOptions {
   }) => void;
 }
 
-export function parse(code: string, options: ParseOptions = {}) {
+export function parse(code: string, options: ParseOptions = {}): void {
   const {
     typescript = false,
     babelPlugins = [],
@@ -110,10 +110,12 @@ export function parse(code: string, options: ParseOptions = {}) {
         for (const propNode of node.openingElement.attributes) {
           const propCode = code.slice(propNode.start || 0, propNode.end || -1);
           const propName = createProp(propNode);
-          const startLoc = propNode.loc!.start;
-          const endLoc = propNode.loc!.end;
+          if (!propNode.loc) {
+            throw new Error(`JSXElement propNode.loc is missing`);
+          }
+          const { start: startLoc, end: endLoc } = propNode.loc;
           const propValue =
-            "value" in propNode
+            propNode.type === "JSXAttribute"
               ? formatPropValue(propNode.value)
               : formatPropValue(null);
           onProp({
