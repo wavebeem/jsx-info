@@ -17,15 +17,10 @@ export function styleError(errorMessage: string): string {
   return chalk.bold.red(errorMessage);
 }
 
+const CHAR_BOX_FULL = chalk.bold.green("*");
+const CHAR_BOX_LIGHT = chalk.bold.red("-");
+
 export function textMeter(total: number, count: number): string {
-  if (typeof total !== "number") {
-    throw new Error("total must be a number");
-  }
-  if (typeof count !== "number") {
-    throw new Error("count must be a number");
-  }
-  const CHAR_BOX_FULL = chalk.bold.green("*");
-  const CHAR_BOX_LIGHT = chalk.bold.red("-");
   const size = 10;
   let str = "";
   let first = Math.ceil((count / total) * size);
@@ -44,7 +39,7 @@ export function styleHeading(...args: any[]): string {
 }
 
 export function styleTitle(...args: any[]): string {
-  return chalk.magenta(...args);
+  return chalk.magenta.bold(...args);
 }
 
 export const spinner = ora();

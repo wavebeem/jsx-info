@@ -59,7 +59,7 @@ Examples:
   Display info only for <div> and <Tab.Container>
       npx jsx-info div Tab.Container
 
-  See lines where className prop was used on div component
+  See lines where className prop was used on <div> component
       npx jsx-info --report lines --prop className div
 
   See lines where \`id\` prop was used on any component
@@ -68,8 +68,7 @@ Examples:
   See lines where kind prop was used with value "primary" on Button component
       npx jsx-info --report lines --prop kind=primary Button
 
-  Ignore any folder named at any depth named \`__test__\`,
-  as well as \`packages/legacy\`
+  Ignore folders based on glob paths
       npx jsx-info --ignore '**/__test__' --ignore packages/legacy
 
   Enable Babel plugins
