@@ -21,7 +21,7 @@ function sortByDesc<A, B>(array: A[], fn: (item: A) => B): A[] {
     if (xa < xb) {
       return 1;
     } else if (xa > xb) {
-      return 1;
+      return -1;
     } else {
       return 0;
     }
@@ -60,7 +60,7 @@ export async function main(): Promise<void> {
         }
         return input.split(/\s+/);
       },
-      message: "Which components (space separated, * = all)",
+      message: "Which components (space separated, * = all) [--components]",
     },
     {
       type: "list",
