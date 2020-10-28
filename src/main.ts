@@ -1,6 +1,15 @@
 import { Analysis, analyze } from "./api";
 import * as cli from "./cli";
-import * as printer from "./printer";
+import {
+  print,
+  spinner,
+  styleComponentName,
+  styleError,
+  styleHeading,
+  styleNumber,
+  stylePropName,
+  textMeter,
+} from "./printer";
 import { sleep } from "./sleep";
 
 export async function main() {
@@ -18,7 +27,7 @@ export async function main() {
     report: cli.report,
     async onFile(filename) {
       if (cli.showProgress) {
-        printer.spinner.text = `Scanning files\n\n${filename}`;
+        spinner.text = `Scanning files\n\n${filename}`;
         // We need to sleep briefly here since parse isn't asnyc and the `ora`
         // spinner library assumes the event loop will be ticking periodically
         await sleep();
@@ -26,8 +35,8 @@ export async function main() {
     },
     async onStart() {
       if (cli.showProgress) {
-        printer.spinner.text = "Finding files";
-        printer.spinner.start();
+        spinner.text = "Finding files";
+        spinner.start();
       }
     },
   });
@@ -42,11 +51,11 @@ export async function main() {
     reportLinesUsage(results);
   }
   reportErrors(results);
-  printer.spinner.stop();
+  spinner.stop();
 }
 
 function reportTime({ filenames, elapsedTime }: Analysis) {
-  printer.print(
+  print(
     `Scanned ${filenames.length} files in ${elapsedTime.toFixed(1)} seconds`
   );
 }
@@ -61,16 +70,16 @@ function reportComponentUsage({
   }
   const pairs = componentUsage;
   const maxDigits = getMaxDigits(Object.values(pairs));
-  printer.print(
-    printer.styleHeading(
+  print(
+    styleHeading(
       `${componentTotal} components used ${componentUsageTotal} times:`
     )
   );
   for (const [componentName, count] of Object.entries(pairs)) {
-    printer.print(
-      "  " + printer.styleNumber(count.toString().padStart(maxDigits)),
-      "  " + printer.textMeter(componentUsageTotal, count),
-      "  " + printer.styleComponentName(componentName)
+    print(
+      "  " + styleNumber(count.toString().padStart(maxDigits)),
+      "  " + textMeter(componentUsageTotal, count),
+      "  " + styleComponentName(componentName)
     );
   }
 }
@@ -81,13 +90,11 @@ function reportLinesUsage({ lineUsage }: Analysis) {
       for (const lineData of data) {
         const { filename, startLoc, prettyCode } = lineData;
         const { line, column } = startLoc;
-        const styledComponentName = printer.styleComponentName(componentName);
-        printer.print(
-          printer.styleHeading(
-            `${styledComponentName} ${filename}:${line}:${column}`
-          )
+        const styledComponentName = styleComponentName(componentName);
+        print(
+          styleHeading(`${styledComponentName} ${filename}:${line}:${column}`)
         );
-        printer.print(prettyCode);
+        print(prettyCode);
       }
     }
   }
@@ -103,23 +110,23 @@ function reportPropUsage({ propUsage, componentUsage }: Analysis) {
     propUsageByComponent
   )) {
     const compUsage = componentUsage[componentName];
-    printer.print(
-      printer.styleHeading(
-        `${printer.styleComponentName(componentName)} was used ${compUsage} ${
+    print(
+      styleHeading(
+        `${styleComponentName(componentName)} was used ${compUsage} ${
           compUsage === 1 ? "time" : "times"
         } with the following prop usage:`
       )
     );
     const maxDigits = getMaxDigits(Object.values(propUsage));
     for (const [propName, usage] of Object.entries(propUsage)) {
-      printer.print(
-        "  " + printer.styleNumber(usage.toString().padStart(maxDigits)),
-        "  " + printer.textMeter(compUsage, usage),
-        "  " + printer.stylePropName(propName)
+      print(
+        "  " + styleNumber(usage.toString().padStart(maxDigits)),
+        "  " + textMeter(compUsage, usage),
+        "  " + stylePropName(propName)
       );
     }
   }
-  printer.print(`
+  print(`
 Tip: Want to see where the className prop was used on the <div> component?
 
 npx jsx-info --report lines --prop className div
@@ -129,23 +136,16 @@ npx jsx-info --report lines --prop className div
 function reportErrors({ errors, suggestedPlugins }: Analysis) {
   const errorsCount = Object.keys(errors).length;
   if (errorsCount) {
-    printer.print(
-      "\n" + errorsCount,
-      "parse",
-      errorsCount === 1 ? "error" : "errors"
-    );
+    print("\n" + errorsCount, "parse", errorsCount === 1 ? "error" : "errors");
     for (const [filename, error] of Object.entries(errors)) {
       const { loc, message } = error;
       const { line, column } = loc;
-      printer.print(
-        `  ${filename}:${line}:${column}`,
-        printer.styleError(message)
-      );
+      print(`  ${filename}:${line}:${column}`, styleError(message));
     }
     if (suggestedPlugins.length > 0) {
-      printer.print("Try adding at least one of the following options:");
+      print("Try adding at least one of the following options:");
       for (const plugin of suggestedPlugins) {
-        printer.print("  --add-babel-plugin", plugin);
+        print("  --add-babel-plugin", plugin);
       }
     }
   }
