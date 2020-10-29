@@ -36,7 +36,6 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
 }
 
 function getPagerStream(): Writable {
-  console.log(chalk.level);
   const pager =
     process.platform === "win32"
       ? spawn("more", { stdio: ["pipe", "inherit", "inherit"] })
