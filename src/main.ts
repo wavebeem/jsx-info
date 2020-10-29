@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import { Writable } from "stream";
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { spawn } from "child_process";
 import { prompt } from "inquirer";
+import { Writable } from "stream";
 import { Analysis, analyze, ReportType } from "./api";
 import { assertNever } from "./assertNever";
 import * as cli from "./cli";
