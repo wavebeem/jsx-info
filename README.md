@@ -78,7 +78,7 @@ key is optional:
 
 ## Documentation
 
-You can use `jsx-info` as a JS library. It exports one function called analyze.
+You can use `jsx-info` as a JS library.
 
 ```js
 const { analyze } = require("jsx-info");
@@ -88,7 +88,7 @@ const analysis = await analyze({
 });
 ```
 
-I've documented the options and data structures in [api.ts][]
+Options and data structures are documented in [api.ts][].
 
 ## Note
 
