@@ -4,8 +4,9 @@ import program from "commander";
 import { cosmiconfigSync } from "cosmiconfig";
 import path from "path";
 import { version } from "../package.json";
-import { ReportType } from "./api";
 import { print, printError } from "./printer";
+
+export type ReportType = "usage" | "props" | "lines";
 
 program.name("jsx-info");
 program.version(version, "-v, --version");

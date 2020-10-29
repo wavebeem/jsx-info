@@ -76,6 +76,20 @@ key is optional:
 }
 ```
 
+## Documentation
+
+You can use `jsx-info` as a JS library. It exports one function called analyze.
+
+```js
+const { analyze } = require("jsx-info");
+
+const analysis = await analyze({
+  /* Options */
+});
+```
+
+I've documented the options and data structures in [api.ts](./blob/master/src/api.ts)
+
 ## Note
 
 `jsx-info` strives to parse all _standard_ JS, JSX, and TypeScript syntax. This

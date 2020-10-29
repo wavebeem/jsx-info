@@ -4,26 +4,33 @@ import globby from "globby";
 import { parse } from "./parse";
 import { sleep } from "./sleep";
 
-export type ReportType = "usage" | "props" | "lines";
-
+/** Options passed to `analyze` */
 export interface AnalyzeOptions {
+  /** List of Babel plugins needed to parse your code */
   babelPlugins?: ParserPlugin[];
+  /** Which JSX components should we scan */
   components?: string[];
+  /** Which directory should we scan (defaults to current working directory) */
   directory?: string;
+  /** Array of file globs (defaults to all .js, .jsx, .tsx files) */
   files?: string[];
+  /** Ignore files specified in the .gitignore file (defaults to true) */
   gitignore?: boolean;
+  /** Array of file globs to ignore */
   ignore?: string[];
+  /** Async callback called before scanning each new file */
   onFile?: (filename: string) => Promise<void>;
-  onStart?: () => Promise<void>;
+  /** Which JSX prop should we scan for (e.g. `id` or `variant=primary`) */
   prop?: string;
-  report?: ReportType;
 }
 
+/** A location in source code */
 export interface SourceLocation {
   line: number;
   column: number;
 }
 
+/** Information about a parse error */
 export interface ErrorInfo {
   message: string;
   pos: number;
@@ -31,6 +38,7 @@ export interface ErrorInfo {
   missingPlugin: string[];
 }
 
+/** Information about a line where a prop was used */
 export interface LineInfo {
   propCode: string;
   prettyCode: string;
@@ -55,6 +63,16 @@ export interface Analysis {
   elapsedTime: number;
 }
 
+/**
+ * Return a Promise with the JSX usage analysis of a project
+ *
+ * This function can easily return several megabytes of data. Parsing every
+ * single JS/TS file in a project can take a while. Please be patient. The
+ * `onFile` callbacks are async. Parsing each file is not an async action and
+ * may block for a couple seconds if the file is large. You can insert a "sleep"
+ * command into the `onFile` callback if you would like to return control
+ * briefly.
+ */
 export async function analyze({
   babelPlugins = [],
   components,
@@ -63,17 +81,9 @@ export async function analyze({
   gitignore = true,
   ignore = [],
   onFile,
-  onStart,
   prop,
-  report,
 }: AnalyzeOptions): Promise<Analysis> {
-  if (!prop && report === "lines") {
-    throw new Error("`prop` option required for `lines` report");
-  }
   const timeStart = Date.now();
-  if (onStart) {
-    await onStart();
-  }
   const filenames = await globby(files || "**/*.{js,jsx,tsx}", {
     absolute: true,
     onlyFiles: true,
@@ -153,6 +163,12 @@ export async function analyze({
     elapsedTime: elapsedTime,
   };
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Implementation details below
+//
+////////////////////////////////////////////////////////////////////////////////
 
 const linesCache = new Map<string, string[]>();
 

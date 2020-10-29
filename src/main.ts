@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { spawn } from "child_process";
 import { prompt } from "inquirer";
 import { Writable } from "stream";
-import { Analysis, analyze, ReportType } from "./api";
+import { Analysis, analyze } from "./api";
 import { assertNever } from "./assertNever";
 import * as cli from "./cli";
 import { print, spinner, textMeter } from "./printer";
@@ -10,7 +10,7 @@ import { sleep } from "./sleep";
 
 interface Answers {
   components?: string[];
-  report?: ReportType;
+  report?: cli.ReportType;
   prop?: string;
 }
 
@@ -54,11 +54,14 @@ function getPagerStream(): Writable {
 }
 
 export async function main(): Promise<void> {
+  // Validate the `--report` command line option
   if (cli.report && !["usage", "props", "lines"].includes(cli.report)) {
     throw new Error(
       `jsx-info: invalid report: ${cli.report} (expected: usage | props | lines)`
     );
   }
+  // Interactively ask the user for any missing command line flags that are
+  // required
   const answers = await prompt<Answers>([
     {
       type: "input",
@@ -106,46 +109,60 @@ export async function main(): Promise<void> {
   if (Object.keys(answers).length > 0) {
     print();
   }
+  // The internal representation for "all components" is different than how you
+  // actually pass it in via the command line, since it's weird to pass an
+  // "empty array" as a command line flag.
   const components: string[] = ((comp) => {
     if (comp && comp.length == 1 && comp[0] == "*") {
       return [];
     }
     return comp;
   })(answers.components || cli.components);
+  // Merge the command line flags with the interactive questions that were
+  // asked, and fall back to default values.
   const prop: string = answers.prop || cli.prop;
-  const report: ReportType = answers.report || cli.report || "usage";
+  const report: cli.ReportType = answers.report || cli.report || "usage";
   const files: string[] = fallbackArray(cli.files, ["**/*.{js,jsx,tsx}"]);
+  // Start the spinner. Sometimes the "finding files" step can take a long time
+  // if you accidentally scan the node_modules folder. This way you can tell
+  // what's wrong instead of just seeing the program hang.
+  if (cli.showProgress) {
+    spinner.text = "Finding files";
+    spinner.start();
+  }
+  // Start the analysis
   const results = await analyze({
     components,
     files,
     prop,
-    report,
     babelPlugins: cli.babelPlugins,
     directory: cli.directory,
     gitignore: cli.gitignore,
     ignore: cli.ignore,
+    // Update the loading spinner with the current filename, and `sleep` so that
+    // the loading spinner actually gets a chance to run, instead of us chewing
+    // all the CPU time.
     async onFile(filename) {
       if (cli.showProgress) {
         spinner.text = `Scanning files\n\n${filename}`;
-        // We need to sleep briefly here since parse isn't asnyc and the `ora`
-        // spinner library assumes the event loop will be ticking periodically
         await sleep();
       }
     },
-    async onStart() {
-      if (cli.showProgress) {
-        spinner.text = "Finding files";
-        spinner.start();
-      }
-    },
   });
+  // Stop the spinner now that the analysis is done
   spinner.stop();
+  // There doesn't seem to be any good way to output color codes into a pager in
+  // Windows, so let's briefly disable color output from chalk.
   const oldChalkLevel = chalk.level;
   if (process.platform === "win32") {
     chalk.level = 0;
   }
+  // Create a stream that writes to a pager (`less -R` unless you're on Windows,
+  // then it's `more`).
   const stream = getPagerStream();
+  // Log how long the command took
   reportTime(stream, results);
+  // Report whatever the user was interested in
   if (report === "usage") {
     reportComponentUsage(stream, results);
   } else if (report === "props") {
@@ -155,8 +172,11 @@ export async function main(): Promise<void> {
   } else {
     assertNever(report);
   }
+  // Report what errors happened so the user can fix parse errors
   reportErrors(stream, results);
+  // End the stream so that the pager knows the input is finished
   stream.end();
+  // Restore the old chalk color level
   chalk.level = oldChalkLevel;
 }
 
