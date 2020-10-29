@@ -35,12 +35,23 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
   return array;
 }
 
-function spawnPager(): ChildProcessWithoutNullStreams {
-  const p =
+function getPagerSink(): Writable {
+  console.log(chalk.level);
+  const pager =
     process.platform === "win32"
       ? spawn("more", { stdio: ["pipe", "inherit", "inherit"] })
       : spawn("less", ["-R"], { stdio: ["pipe", "inherit", "inherit"] });
-  return p as any; // TODO: What even
+  if (pager.stdin) {
+    // I don't care if the user quits their pager before we've written all our
+    // output! Just silently ignore so the program can finish.
+    pager.stdin.on("error", (err: NodeJS.ErrnoException) => {
+      if (err.code !== "EPIPE") {
+        throw err;
+      }
+    });
+    return pager.stdin;
+  }
+  return process.stdout;
 }
 
 export async function main(): Promise<void> {
@@ -130,26 +141,24 @@ export async function main(): Promise<void> {
     },
   });
   spinner.stop();
-  const pager = spawnPager();
-  // I don't care if the user quits their pager before we've written all our
-  // output! Just silently ignore so the program can finish.
-  pager.stdin.on("error", (err: NodeJS.ErrnoException) => {
-    if (err.code !== "EPIPE") {
-      throw err;
-    }
-  });
-  reportTime(pager.stdin, results);
+  const chalkLevel = chalk.level;
+  if (process.platform === "win32") {
+    chalk.level = 0;
+  }
+  const sink = getPagerSink();
+  reportTime(sink, results);
   if (report === "usage") {
-    reportComponentUsage(pager.stdin, results);
+    reportComponentUsage(sink, results);
   } else if (report === "props") {
-    reportPropUsage(pager.stdin, results);
+    reportPropUsage(sink, results);
   } else if (report === "lines") {
-    reportLinesUsage(pager.stdin, results);
+    reportLinesUsage(sink, results);
   } else {
     assertNever(report);
   }
-  reportErrors(pager.stdin, results);
-  pager.stdin.end();
+  reportErrors(sink, results);
+  sink.end();
+  chalk.level = chalkLevel;
 }
 
 function reportTime(target: Writable, { filenames, elapsedTime }: Analysis) {
