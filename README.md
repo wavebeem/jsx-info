@@ -88,7 +88,7 @@ const analysis = await analyze({
 });
 ```
 
-I've documented the options and data structures in [api.ts](./blob/master/src/api.ts)
+I've documented the options and data structures in [api.ts](./src/api.ts)
 
 ## Note
 
