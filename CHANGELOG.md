@@ -1,3 +1,14 @@
+# v2.0.0
+
+- Added a full JS API for library usage
+- Changed `--add-babel-plugin a --add-babel-plugin b` to `--babel-plugins a b`
+- Changed `--ignore a --ignore b` to `--ignore a b`
+- Changed `--files a --files b` to `--files a b`
+- Changed `jsx-info a b c` to `jsx-info --components a b c`
+- Changed `jsx-info` to `jsx-info --components "*"`
+- Running `jsx-info` with missing arguments now enters interactive mode
+- Removed the `--sort <...>` flag
+
 # v1.6.1
 
 - Crash fix

@@ -2,13 +2,15 @@
   "name": "jsx-info",
   "version": "1.6.1",
   "description": "displays a report of JSX component and prop usage",
-  "bin": "src/jsx-info.js",
+  "main": "dist/src/api.js",
+  "bin": "dist/src/jsx-info.js",
   "scripts": {
+    "prepack": "rm -rf dist && tsc",
     "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
-    "start": "node src/jsx-info.js",
+    "start": "tsc --watch",
     "upgrade": "npm-check --update",
-    "test": "eslint src && prettier --list-different \"src/**/*.js\""
+    "test": "eslint src --ext .js,.ts --format unix && prettier --check \"src/**/*.{js,ts}\""
   },
   "repository": {
     "type": "git",
@@ -22,20 +24,26 @@
     "statistics",
     "metrics"
   ],
-  "author": "Brian Mock <brian@mockbrian.com>",
+  "author": "Brian Mock <brian@wavebeem.com>",
   "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.4.3",
-    "@babel/traverse": "^7.4.3",
-    "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "cosmiconfig": "^5.2.1",
-    "globby": "^9.2.0",
-    "ora": "^3.4.0"
+    "@babel/parser": "^7.12.3",
+    "@babel/traverse": "^7.12.1",
+    "@types/babel__traverse": "^7.0.15",
+    "@types/inquirer": "^7.3.1",
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
+    "cosmiconfig": "^7.0.0",
+    "globby": "^11.0.1",
+    "inquirer": "^7.3.3",
+    "ora": "^5.1.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "npm-check": "^5.9.0",
-    "prettier": "^1.17.0"
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "npm-check": "^5.9.2",
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.5"
   }
 }
