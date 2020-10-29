@@ -35,7 +35,7 @@ function fallbackArray<T>(array: T[], fallback: T[]): T[] {
   return array;
 }
 
-function getPagerSink(): Writable {
+function getPagerStream(): Writable {
   console.log(chalk.level);
   const pager =
     process.platform === "win32"
@@ -145,30 +145,30 @@ export async function main(): Promise<void> {
   if (process.platform === "win32") {
     chalk.level = 0;
   }
-  const sink = getPagerSink();
-  reportTime(sink, results);
+  const stream = getPagerStream();
+  reportTime(stream, results);
   if (report === "usage") {
-    reportComponentUsage(sink, results);
+    reportComponentUsage(stream, results);
   } else if (report === "props") {
-    reportPropUsage(sink, results);
+    reportPropUsage(stream, results);
   } else if (report === "lines") {
-    reportLinesUsage(sink, results);
+    reportLinesUsage(stream, results);
   } else {
     assertNever(report);
   }
-  reportErrors(sink, results);
-  sink.end();
+  reportErrors(stream, results);
+  stream.end();
   chalk.level = oldChalkLevel;
 }
 
-function reportTime(target: Writable, { filenames, elapsedTime }: Analysis) {
-  target.write(
+function reportTime(stream: Writable, { filenames, elapsedTime }: Analysis) {
+  stream.write(
     `Scanned ${filenames.length} files in ${elapsedTime.toFixed(1)} seconds\n`
   );
 }
 
 function reportComponentUsage(
-  target: Writable,
+  stream: Writable,
   { componentTotal, componentUsageTotal, componentUsage }: Analysis
 ) {
   if (componentTotal === 0) {
@@ -176,12 +176,12 @@ function reportComponentUsage(
   }
   const pairs = componentUsage;
   const maxDigits = getMaxDigits(Object.values(pairs));
-  target.write(
+  stream.write(
     chalk.cyan`\n${componentTotal} components used ${componentUsageTotal} times:\n`
   );
   const sortedUsage = sortByDesc(Object.entries(pairs), ([, count]) => count);
   for (const [componentName, count] of sortedUsage) {
-    target.write(
+    stream.write(
       [
         "  " + chalk.bold(count.toString().padStart(maxDigits)),
         "  " + textMeter(componentUsageTotal, count),
@@ -191,18 +191,18 @@ function reportComponentUsage(
   }
 }
 
-function reportLinesUsage(target: Writable, { lineUsage }: Analysis) {
+function reportLinesUsage(stream: Writable, { lineUsage }: Analysis) {
   for (const [componentName, props] of Object.entries(lineUsage)) {
     for (const data of Object.values(props)) {
       for (const lineData of data) {
         const { filename, startLoc, prettyCode } = lineData;
         const { line, column } = startLoc;
         const styledComponentName = chalk.bold(`<${componentName}>`);
-        target.write(
+        stream.write(
           chalk.cyan`\n${styledComponentName} ${filename}:${line}:${column}\n`
         );
-        target.write(prettyCode);
-        target.write("\n");
+        stream.write(prettyCode);
+        stream.write("\n");
       }
     }
   }
@@ -214,7 +214,7 @@ function getMaxDigits(iterable: Iterable<number>): number {
 }
 
 function reportPropUsage(
-  target: Writable,
+  stream: Writable,
   { propUsage, componentUsage }: Analysis
 ) {
   const propUsageByComponent = sortByDesc(
@@ -223,7 +223,7 @@ function reportPropUsage(
   );
   for (const [componentName, propUsage] of propUsageByComponent) {
     const compUsage = componentUsage[componentName];
-    target.write(
+    stream.write(
       `\n${chalk.bold(`<${componentName}>`)} was used ${compUsage} ${
         compUsage === 1 ? "time" : "times"
       } with the following prop usage:\n`
@@ -234,7 +234,7 @@ function reportPropUsage(
       ([, count]) => count
     );
     for (const [propName, usage] of sortedUsage) {
-      target.write(
+      stream.write(
         [
           "  " + chalk.bold(usage.toString().padStart(maxDigits)),
           "  " + textMeter(compUsage, usage),
@@ -247,24 +247,24 @@ function reportPropUsage(
 }
 
 function reportErrors(
-  target: Writable,
+  stream: Writable,
   { errors, suggestedPlugins }: Analysis
 ) {
   const errorsCount = Object.keys(errors).length;
   if (errorsCount) {
-    target.write(
+    stream.write(
       "\n" + errorsCount + " parse " + (errorsCount === 1 ? "error" : "errors")
     );
     for (const [filename, error] of Object.entries(errors)) {
       const { loc, message } = error;
       const { line, column } = loc;
-      target.write(
+      stream.write(
         `  ${filename}:${line}:${column}` + chalk.bold.red(message) + "\n"
       );
     }
     if (suggestedPlugins.length > 0) {
-      target.write("\nTry adding these Babel plugins as arguments:\n");
-      target.write(
+      stream.write("\nTry adding these Babel plugins as arguments:\n");
+      stream.write(
         chalk.bold.cyan("    --babel-plugins") +
           " " +
           suggestedPlugins.map((s) => chalk.underline.magenta(s)).join(" ") +
