@@ -131,11 +131,13 @@ export async function main(): Promise<void> {
   });
   spinner.stop();
   const pager = spawnPager();
-  pager.on("disconnect", () => console.log("disconnect"));
-  pager.on("close", () => console.log("close"));
-  pager.on("error", () => console.log("error"));
-  pager.on("exit", () => console.log("exit"));
-  pager.on("message", () => console.log("message"));
+  // I don't care if the user quits their pager before we've written all our
+  // output! Just silently ignore so the program can finish.
+  pager.stdin.on("error", (err: NodeJS.ErrnoException) => {
+    if (err.code !== "EPIPE") {
+      throw err;
+    }
+  });
   reportTime(pager.stdin, results);
   if (report === "usage") {
     reportComponentUsage(pager.stdin, results);
@@ -147,8 +149,7 @@ export async function main(): Promise<void> {
     assertNever(report);
   }
   reportErrors(pager.stdin, results);
-  // pager.stdin.end();
-  // pager.kill("INT");
+  pager.stdin.end();
 }
 
 function reportTime(target: Writable, { filenames, elapsedTime }: Analysis) {
