@@ -141,7 +141,7 @@ export async function main(): Promise<void> {
     },
   });
   spinner.stop();
-  const chalkLevel = chalk.level;
+  const oldChalkLevel = chalk.level;
   if (process.platform === "win32") {
     chalk.level = 0;
   }
@@ -158,7 +158,7 @@ export async function main(): Promise<void> {
   }
   reportErrors(sink, results);
   sink.end();
-  chalk.level = chalkLevel;
+  chalk.level = oldChalkLevel;
 }
 
 function reportTime(target: Writable, { filenames, elapsedTime }: Analysis) {
