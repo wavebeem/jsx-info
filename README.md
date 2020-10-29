@@ -88,7 +88,7 @@ const analysis = await analyze({
 });
 ```
 
-I've documented the options and data structures in [api.ts](./src/api.ts)
+I've documented the options and data structures in [api.ts][]
 
 ## Note
 
@@ -119,3 +119,4 @@ Copyright &copy; [Brian Mock][] under the [MIT License][].
 [code of conduct]: CODE_OF_CONDUCT.md
 [mit license]: LICENSE.md
 [proposals]: https://tc39.github.io/process-document/
+[api.ts]: src/api.ts
