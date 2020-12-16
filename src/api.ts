@@ -144,21 +144,24 @@ export async function analyze({
           } else {
             for (const prop of props) {
               let wantPropKey = searchProp;
-              let wantPropValue = undefined;
-              if (searchProp.includes("=")) {
+              let match = (_value: string | symbol): boolean => true;
+              if (searchProp.includes("!=")) {
+                const index = searchProp.indexOf("!=");
+                const key = searchProp.slice(0, index);
+                const val = searchProp.slice(index + 2);
+                wantPropKey = key;
+                match = (value) => value !== val;
+              } else if (searchProp.includes("=")) {
                 const index = searchProp.indexOf("=");
                 const key = searchProp.slice(0, index);
                 const val = searchProp.slice(index + 1);
                 wantPropKey = key;
-                wantPropValue = val;
+                match = (value) => value === val;
               }
               if (prop.propName !== wantPropKey) {
                 return;
               }
-              if (
-                wantPropValue !== undefined &&
-                prop.propValue !== wantPropValue
-              ) {
+              if (!match(prop.propValue)) {
                 return;
               }
               reporter.addProp(componentName, prop.propName, {

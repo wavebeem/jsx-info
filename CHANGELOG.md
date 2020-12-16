@@ -2,6 +2,8 @@
 
 - Added support for `--prop '!propName'` to search for all usages of a component
   where `propName` is not used
+- Added support for `--prop 'propName!=value'` to search for all usages of a
+  component where `propName`'s value is **not** `value`
 
 # v2.0.0
 

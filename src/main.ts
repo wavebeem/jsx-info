@@ -104,7 +104,7 @@ export async function main(): Promise<void> {
         return input.trim();
       },
       message:
-        "Which prop (e.g. `id` or `variant=primary` or `!className`) [--prop]",
+        "Which prop (e.g. `id` or `variant=primary` or `!className` or `type!=text`) [--prop]",
     },
   ]);
   if (Object.keys(answers).length > 0) {
