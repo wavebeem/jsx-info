@@ -1,7 +1,8 @@
-import { ParserPlugin } from "@babel/parser";
+import { parse as babelParse, ParserPlugin } from "@babel/parser";
+import traverse from "@babel/traverse";
+import { JSXElement, Node } from "@babel/types";
 import fs from "fs";
 import globby from "globby";
-import { parse } from "./parse";
 import { sleep } from "./sleep";
 
 /** Options passed to `analyze` */
@@ -81,7 +82,7 @@ export async function analyze({
   gitignore = true,
   ignore = [],
   onFile,
-  prop,
+  prop: searchProp = "",
 }: AnalyzeOptions): Promise<Analysis> {
   const timeStart = Date.now();
   const filenames = await globby(files || "**/*.{js,jsx,tsx}", {
@@ -104,42 +105,75 @@ export async function analyze({
         babelPlugins,
         typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
         onlyComponents: components,
-        onComponent: (componentName: any) => {
+        onComponent: ({ componentName, node }) => {
           reporter.addComponent(componentName);
-        },
-        onProp: ({
-          componentName,
-          propName,
-          propCode,
-          startLoc,
-          endLoc,
-          propValue,
-        }: any) => {
-          if (prop) {
-            let wantPropKey = prop;
-            let wantPropValue = undefined;
-            if (prop.includes("=")) {
-              const index = prop.indexOf("=");
-              const key = prop.slice(0, index);
-              const val = prop.slice(index + 1);
-              wantPropKey = key;
-              wantPropValue = val;
+          const props = node.openingElement.attributes.map((propNode) => {
+            if (!propNode.loc) {
+              throw new Error(`JSXElement propNode.loc is missing`);
             }
-            if (propName !== wantPropKey) {
-              return;
+            return {
+              componentName,
+              propName: createProp(propNode),
+              propCode: code.slice(propNode.start || 0, propNode.end || -1),
+              startLoc: propNode.loc.start,
+              endLoc: propNode.loc.end,
+              propValue:
+                propNode.type === "JSXAttribute"
+                  ? formatPropValue(propNode.value)
+                  : formatPropValue(null),
+            };
+          });
+          if (searchProp.startsWith("!")) {
+            const wantProp = searchProp.slice(1);
+            if (props.every((p) => p.propName !== wantProp)) {
+              if (!node.loc) {
+                throw new Error(`JSXElement propNode.loc is missing`);
+              }
+              reporter.addProp(componentName, searchProp, {
+                propCode: code.slice(node.start || 0, node.end || -1),
+                startLoc: node.loc.start,
+                endLoc: node.loc.end,
+                prettyCode: formatPrettyCode(
+                  code,
+                  node.loc.start.line,
+                  node.loc.end.line
+                ),
+                filename,
+              });
             }
-            if (wantPropValue !== undefined && propValue !== wantPropValue) {
-              return;
+          } else {
+            for (const prop of props) {
+              let wantPropKey = searchProp;
+              let wantPropValue = undefined;
+              if (searchProp.includes("=")) {
+                const index = searchProp.indexOf("=");
+                const key = searchProp.slice(0, index);
+                const val = searchProp.slice(index + 1);
+                wantPropKey = key;
+                wantPropValue = val;
+              }
+              if (prop.propName !== wantPropKey) {
+                return;
+              }
+              if (
+                wantPropValue !== undefined &&
+                prop.propValue !== wantPropValue
+              ) {
+                return;
+              }
+              reporter.addProp(componentName, prop.propName, {
+                propCode: prop.propCode,
+                startLoc: prop.startLoc,
+                endLoc: prop.endLoc,
+                prettyCode: formatPrettyCode(
+                  code,
+                  prop.startLoc.line,
+                  prop.endLoc.line
+                ),
+                filename,
+              });
             }
           }
-          const prettyCode = formatPrettyCode(code, startLoc.line, endLoc.line);
-          reporter.addProp(componentName, propName, {
-            propCode,
-            startLoc,
-            endLoc,
-            prettyCode,
-            filename,
-          });
         },
       });
     } catch (error) {
@@ -180,6 +214,106 @@ function getLines(code: string): string[] {
   lines = code.split(/\r?\n/);
   linesCache.set(code, lines);
   return lines;
+}
+
+const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
+
+function formatPropValue(value: Node | null): string | symbol {
+  if (value === null) {
+    return "true";
+  }
+  if (!value) {
+    return EXPRESSION;
+  }
+  switch (value.type) {
+    // TODO: Should we interpret anything else here?
+    case "StringLiteral":
+      return value.value;
+    case "JSXExpressionContainer":
+      return formatPropValue(value.expression);
+    case "NumericLiteral":
+    case "BooleanLiteral":
+      return String(value.value);
+    default:
+      return EXPRESSION;
+  }
+}
+
+function getAttributeName(attributeNode: Node): string {
+  switch (attributeNode.type) {
+    case "JSXIdentifier":
+      return attributeNode.name;
+    case "JSXNamespacedName":
+      return attributeNode.name.name;
+    case "JSXAttribute":
+      return getAttributeName(attributeNode.name);
+    case "JSXSpreadAttribute":
+      return "{...}";
+    default:
+      throw new Error(`unexpected node type: ${attributeNode.type}`);
+  }
+}
+
+function createProp(attributeNode: Node) {
+  return getAttributeName(attributeNode);
+}
+
+function getDottedName(nameNode: Node): string {
+  switch (nameNode.type) {
+    case "JSXMemberExpression":
+      return [nameNode.object, nameNode.property].map(getDottedName).join(".");
+    case "JSXIdentifier":
+      return nameNode.name;
+    default:
+      throw new Error(`unexpected node type: ${nameNode.type}`);
+  }
+}
+
+function createComponent(componentNode: JSXElement) {
+  return getDottedName(componentNode.openingElement.name);
+}
+
+interface ParseOptions {
+  typescript?: boolean;
+  babelPlugins?: ParserPlugin[];
+  onlyComponents?: string[];
+  onComponent?: (options: { componentName: string; node: JSXElement }) => void;
+}
+
+export function parse(code: string, options: ParseOptions = {}): void {
+  const {
+    typescript = false,
+    babelPlugins = [],
+    onlyComponents = [],
+    onComponent = () => {},
+  } = options;
+  function doReportComponent(component: string) {
+    if (onlyComponents.length === 0) {
+      return true;
+    }
+    return onlyComponents.indexOf(component) !== -1;
+  }
+  const ast = babelParse(code, {
+    sourceType: "unambiguous",
+    allowReturnOutsideFunction: true,
+    plugins: [
+      typescript ? "typescript" : "flow",
+      "jsx",
+      "dynamicImport",
+      "classProperties",
+      "objectRestSpread",
+      ...babelPlugins,
+    ],
+  });
+  traverse(ast, {
+    JSXElement(path) {
+      const node = path.node;
+      const componentName = createComponent(node);
+      if (doReportComponent(componentName)) {
+        onComponent({ componentName, node });
+      }
+    },
+  });
 }
 
 function formatPrettyCode(

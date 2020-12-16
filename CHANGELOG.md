@@ -1,3 +1,8 @@
+# v2.1.0
+
+- Added support for `--prop '!propName'` to search for all usages of a component
+  where `propName` is not used
+
 # v2.0.0
 
 - Added a full JS API for library usage

@@ -103,7 +103,8 @@ export async function main(): Promise<void> {
       filter(input: string) {
         return input.trim();
       },
-      message: "Which prop (e.g. `id` or `variant=primary`) [--prop]",
+      message:
+        "Which prop (e.g. `id` or `variant=primary` or `!className`) [--prop]",
     },
   ]);
   if (Object.keys(answers).length > 0) {
