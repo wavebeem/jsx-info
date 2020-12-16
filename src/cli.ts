@@ -27,8 +27,8 @@ program
   .option("--files <patterns...>", "glob patterns used to find input files")
   .option("--report <usage|props|lines>", "which report to show")
   .option(
-    "--prop <prop[=value]>",
-    "which prop to search for when running a lines report"
+    "--prop <prop>",
+    "which prop to search for when running a lines report (e.g. `id` or `variant=primary` or `!className` or `type!=text`)"
   );
 
 program.on("--help", () => {
@@ -38,22 +38,28 @@ Examples:
       {bold.cyan npx jsx-info}
 
   Display info only for <div> and <Tab.Container>
-      {bold.cyan npx jsx-info --components} {underline.magenta div Tab.Container}
+      {bold.cyan npx jsx-info --components} {magenta div Tab.Container}
 
   See lines where className prop was used on <div> component
-      {bold.cyan npx jsx-info --report} {underline.magenta lines} {bold.cyan --prop} {underline.magenta className} {bold.cyan --components} {underline.magenta div}
+      {bold.cyan npx jsx-info --report} {magenta lines} {bold.cyan --prop} {magenta className} {bold.cyan --components} {magenta div}
 
   See lines where \`id\` prop was used on any component
-      {bold.cyan npx jsx-info --report} {underline.magenta lines} {bold.cyan --prop} {underline.magenta id} {bold.cyan --components} {underline.magenta "*"}
+      {bold.cyan npx jsx-info --report} {magenta lines} {bold.cyan --prop} {magenta id} {bold.cyan --components} {magenta "*"}
 
-  See lines where kind prop was used with value "primary" on Button component
-      {bold.cyan npx jsx-info --report} {underline.magenta lines} {bold.cyan --prop} {underline.magenta kind=primary} {bold.cyan --components} {underline.magenta Button}
+  See lines where the kind prop was used with value "primary" on Button component
+      {bold.cyan npx jsx-info --report} {magenta lines} {bold.cyan --prop} {magenta kind=primary} {bold.cyan --components} {magenta Button}
+
+  See lines where the \`kind\` prop was used with any value besides "primary" on the Button component
+      {bold.cyan npx jsx-info --report} {magenta lines} {bold.cyan --prop} {magenta 'kind!=primary'} {bold.cyan --components} {magenta Button}
+
+  See lines where the \`kind\` prop wasn't used on the Button component
+      {bold.cyan npx jsx-info --report} {magenta lines} {bold.cyan --prop} {magenta '!kind'} {bold.cyan --components} {magenta Button}
 
   Ignore folders based on glob paths
-      {bold.cyan npx jsx-info --ignore} {underline.magenta "**/__test__"} {underline.magenta packages/legacy}
+      {bold.cyan npx jsx-info --ignore} {magenta "**/__test__"} {magenta packages/legacy}
 
   Enable Babel plugins
-      {bold.cyan npx jsx-info --babel-plugins} {underline.magenta decorators-legacy} {underline.magenta pipelineOperator}
+      {bold.cyan npx jsx-info --babel-plugins} {magenta decorators-legacy} {magenta pipelineOperator}
 
   Example .jsx-info.json config file
       ${"{"}

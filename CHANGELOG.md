@@ -1,20 +1,20 @@
 # v2.1.0
 
-- Added support for `--prop '!propName'` to search for all usages of a component
+- Adds support for `--prop '!propName'` to search for all usages of a component
   where `propName` is not used
-- Added support for `--prop 'propName!=value'` to search for all usages of a
+- Adds support for `--prop 'propName!=value'` to search for all usages of a
   component where `propName`'s value is **not** `value`
 
 # v2.0.0
 
-- Added a full JS API for library usage
-- Changed `--add-babel-plugin a --add-babel-plugin b` to `--babel-plugins a b`
-- Changed `--ignore a --ignore b` to `--ignore a b`
-- Changed `--files a --files b` to `--files a b`
-- Changed `jsx-info a b c` to `jsx-info --components a b c`
-- Changed `jsx-info` to `jsx-info --components "*"`
+- Adds a full JS API for library usage
+- Changes `--add-babel-plugin a --add-babel-plugin b` to `--babel-plugins a b`
+- Changes `--ignore a --ignore b` to `--ignore a b`
+- Changes `--files a --files b` to `--files a b`
+- Changes `jsx-info a b c` to `jsx-info --components a b c`
+- Changes `jsx-info` to `jsx-info --components "*"`
 - Running `jsx-info` with missing arguments now enters interactive mode
-- Removed the `--sort <...>` flag
+- Removes the `--sort <...>` flag
 
 # v1.6.1
 
