@@ -7,10 +7,10 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/basic/main.js",
+    "$ROOT/main.js",
   ],
   "lineUsage": Object {
     "div": Object {
@@ -77,7 +77,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {
     "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js": Object {
       "loc": Position {
@@ -93,7 +93,7 @@ Object {
     },
   },
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js",
+    "$ROOT/main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -112,10 +112,10 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 2,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js",
+    "$ROOT/main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -128,7 +128,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [],
   "lineUsage": Object {},
@@ -142,7 +142,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {
     "/Users/brianmock/w/jsx-info/fixtures/error/main.js": Object {
       "loc": Position {
@@ -155,7 +155,7 @@ Object {
     },
   },
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/error/main.js",
+    "$ROOT/main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -170,10 +170,10 @@ Object {
     "div": 8,
   },
   "componentUsageTotal": 8,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/prop-usage/main.js",
+    "$ROOT/main.js",
   ],
   "lineUsage": Object {
     "div": Object {
@@ -236,10 +236,10 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "elapsedTime": Any<Number>,
+  "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "/Users/brianmock/w/jsx-info/fixtures/ts/main.tsx",
+    "$ROOT/main.tsx",
   ],
   "lineUsage": Object {
     "div": Object {
