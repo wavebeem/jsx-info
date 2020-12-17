@@ -3,6 +3,6 @@ node_js:
   - "node"
   - "lts/*"
 script:
-  - npm eslint
-  - npm prettier
+  - npm run eslint
+  - npm run prettier
   - npm test
