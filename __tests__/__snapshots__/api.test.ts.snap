@@ -72,6 +72,57 @@ Object {
 }
 `;
 
+exports[`analyze decorators directory 1`] = `
+Object {
+  "componentTotal": 0,
+  "componentUsage": Object {},
+  "componentUsageTotal": 0,
+  "elapsedTime": Any<Number>,
+  "errors": Object {
+    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js": Object {
+      "loc": Position {
+        "column": 0,
+        "line": 1,
+      },
+      "message": "This experimental syntax requires enabling one of the following parser plugin(s): 'decorators-legacy, decorators' (1:0)",
+      "missingPlugin": Array [
+        "decorators-legacy",
+        "decorators",
+      ],
+      "pos": 0,
+    },
+  },
+  "filenames": Array [
+    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js",
+  ],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [
+    "decorators-legacy",
+    "decorators",
+  ],
+}
+`;
+
+exports[`analyze decorators directory with plugin decorators-legacy 1`] = `
+Object {
+  "componentTotal": 2,
+  "componentUsage": Object {
+    "App": 1,
+    "div": 1,
+  },
+  "componentUsageTotal": 2,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js",
+  ],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [],
+}
+`;
+
 exports[`analyze empty directory 1`] = `
 Object {
   "componentTotal": 0,
@@ -80,6 +131,32 @@ Object {
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze error directory 1`] = `
+Object {
+  "componentTotal": 0,
+  "componentUsage": Object {},
+  "componentUsageTotal": 0,
+  "elapsedTime": Any<Number>,
+  "errors": Object {
+    "/Users/brianmock/w/jsx-info/fixtures/error/main.js": Object {
+      "loc": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "message": "Unexpected token (2:0)",
+      "missingPlugin": undefined,
+      "pos": 12,
+    },
+  },
+  "filenames": Array [
+    "/Users/brianmock/w/jsx-info/fixtures/error/main.js",
+  ],
   "lineUsage": Object {},
   "propUsage": Object {},
   "suggestedPlugins": Array [],
@@ -146,6 +223,46 @@ Object {
   "propUsage": Object {
     "div": Object {
       "a": 3,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze ts directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 1,
+  },
+  "componentUsageTotal": 1,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "/Users/brianmock/w/jsx-info/fixtures/ts/main.tsx",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "typescriptIsCool": Array [
+        Object {
+          "endLoc": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": "/Users/brianmock/w/jsx-info/fixtures/ts/main.tsx",
+          "prettyCode": "   1 | <div typescriptIsCool />;",
+          "propCode": "typescriptIsCool",
+          "startLoc": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "typescriptIsCool": 1,
     },
   },
   "suggestedPlugins": Array [],
