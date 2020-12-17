@@ -5,12 +5,16 @@
   "main": "dist/src/api.js",
   "bin": "dist/src/jsx-info.js",
   "scripts": {
-    "prepack": "rm -rf dist && tsc",
-    "preversion": "npm test",
+    "prepack": "rimraf dist && tsc",
+    "preversion": "npm run eslint && npm run prettier && npm test",
     "postversion": "git push && git push --tags && npm publish",
     "start": "tsc --watch",
     "upgrade": "npm-check --update",
-    "test": "eslint src --ext .js,.ts --format unix && prettier --check \"src/**/*.{js,ts}\""
+    "lint": "npm run eslint && npm run prettier",
+    "eslint": "eslint src --ext .js,.ts --format unix",
+    "prettier": "prettier --check \"src/**/*.{js,ts}\"",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -42,8 +46,12 @@
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.12.1",
+    "jest": "^26.6.3",
     "npm-check": "^5.9.2",
     "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.1.1",
     "typescript": "^4.0.5"
   }
 }

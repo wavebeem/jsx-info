@@ -82,8 +82,9 @@ export async function analyze({
   gitignore = true,
   ignore = [],
   onFile,
-  prop: searchProp = "",
+  prop = "",
 }: AnalyzeOptions): Promise<Analysis> {
+  const searchProp = prop;
   const timeStart = Date.now();
   const filenames = await globby(files || "**/*.{js,jsx,tsx}", {
     absolute: true,
@@ -158,7 +159,7 @@ export async function analyze({
                 wantPropKey = key;
                 match = (value) => value === val;
               }
-              if (prop.propName !== wantPropKey) {
+              if (wantPropKey && prop.propName !== wantPropKey) {
                 return;
               }
               if (!match(prop.propValue)) {

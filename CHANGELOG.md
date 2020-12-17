@@ -1,3 +1,7 @@
+# v2.1.1
+
+- Fixes a bug where prop usage wasn't collected
+
 # v2.1.0
 
 - Adds support for `--prop '!propName'` to search for all usages of a component
