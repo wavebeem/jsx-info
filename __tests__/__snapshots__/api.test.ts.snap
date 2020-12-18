@@ -7,7 +7,8 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/basic",
+  "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
     "main.js",
@@ -20,7 +21,7 @@ Object {
             "column": 6,
             "line": 1,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/basic/main.js",
+          "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "a",
           "startLoc": Position {
@@ -35,7 +36,7 @@ Object {
             "column": 8,
             "line": 1,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/basic/main.js",
+          "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "b",
           "startLoc": Position {
@@ -50,7 +51,7 @@ Object {
             "column": 10,
             "line": 1,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/basic/main.js",
+          "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "c",
           "startLoc": Position {
@@ -77,9 +78,10 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/decorators",
+  "elapsedTime": Any<Number>,
   "errors": Object {
-    "/Users/brianmock/w/jsx-info/fixtures/decorators/main.js": Object {
+    "main.js": Object {
       "loc": Position {
         "column": 0,
         "line": 1,
@@ -112,7 +114,8 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 2,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/decorators",
+  "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
     "main.js",
@@ -128,7 +131,8 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/empty",
+  "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [],
   "lineUsage": Object {},
@@ -142,9 +146,10 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/error",
+  "elapsedTime": Any<Number>,
   "errors": Object {
-    "/Users/brianmock/w/jsx-info/fixtures/error/main.js": Object {
+    "main.js": Object {
       "loc": Position {
         "column": 0,
         "line": 2,
@@ -170,7 +175,8 @@ Object {
     "div": 8,
   },
   "componentUsageTotal": 8,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/prop-usage",
+  "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
     "main.js",
@@ -183,7 +189,7 @@ Object {
             "column": 6,
             "line": 1,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/prop-usage/main.js",
+          "filename": "main.js",
           "prettyCode": "   1 | <div a />;",
           "propCode": "a",
           "startLoc": Position {
@@ -196,7 +202,7 @@ Object {
             "column": 6,
             "line": 3,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/prop-usage/main.js",
+          "filename": "main.js",
           "prettyCode": "   3 | <div a b />;",
           "propCode": "a",
           "startLoc": Position {
@@ -209,7 +215,7 @@ Object {
             "column": 6,
             "line": 4,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/prop-usage/main.js",
+          "filename": "main.js",
           "prettyCode": "   4 | <div a b c />;",
           "propCode": "a",
           "startLoc": Position {
@@ -236,7 +242,8 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "elapsedTime": 0,
+  "directory": "/Users/brian/w/jsx-info/fixtures/ts",
+  "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
     "main.tsx",
@@ -249,7 +256,7 @@ Object {
             "column": 21,
             "line": 1,
           },
-          "filename": "/Users/brianmock/w/jsx-info/fixtures/ts/main.tsx",
+          "filename": "main.tsx",
           "prettyCode": "   1 | <div typescriptIsCool />;",
           "propCode": "typescriptIsCool",
           "startLoc": Position {
