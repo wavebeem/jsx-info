@@ -1,0 +1,277 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`analyze basic directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 1,
+  },
+  "componentUsageTotal": 1,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "a": Array [
+        Object {
+          "endLoc": Position {
+            "column": 6,
+            "line": 1,
+          },
+          "filename": "main.js",
+          "prettyCode": "   1 | <div a b c />;",
+          "propCode": "a",
+          "startLoc": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+      ],
+      "b": Array [
+        Object {
+          "endLoc": Position {
+            "column": 8,
+            "line": 1,
+          },
+          "filename": "main.js",
+          "prettyCode": "   1 | <div a b c />;",
+          "propCode": "b",
+          "startLoc": Position {
+            "column": 7,
+            "line": 1,
+          },
+        },
+      ],
+      "c": Array [
+        Object {
+          "endLoc": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "filename": "main.js",
+          "prettyCode": "   1 | <div a b c />;",
+          "propCode": "c",
+          "startLoc": Position {
+            "column": 9,
+            "line": 1,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "a": 1,
+      "b": 1,
+      "c": 1,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze decorators directory 1`] = `
+Object {
+  "componentTotal": 0,
+  "componentUsage": Object {},
+  "componentUsageTotal": 0,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {
+    "main.js": Object {
+      "loc": Position {
+        "column": 0,
+        "line": 1,
+      },
+      "message": "This experimental syntax requires enabling one of the following parser plugin(s): 'decorators-legacy, decorators' (1:0)",
+      "missingPlugin": Array [
+        "decorators-legacy",
+        "decorators",
+      ],
+      "pos": 0,
+    },
+  },
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [
+    "decorators-legacy",
+    "decorators",
+  ],
+}
+`;
+
+exports[`analyze decorators directory with plugin decorators-legacy 1`] = `
+Object {
+  "componentTotal": 2,
+  "componentUsage": Object {
+    "App": 1,
+    "div": 1,
+  },
+  "componentUsageTotal": 2,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze empty directory 1`] = `
+Object {
+  "componentTotal": 0,
+  "componentUsage": Object {},
+  "componentUsageTotal": 0,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze error directory 1`] = `
+Object {
+  "componentTotal": 0,
+  "componentUsage": Object {},
+  "componentUsageTotal": 0,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {
+    "main.js": Object {
+      "loc": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "message": "Unexpected token (2:0)",
+      "missingPlugin": undefined,
+      "pos": 12,
+    },
+  },
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {},
+  "propUsage": Object {},
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze prop-usage directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 8,
+  },
+  "componentUsageTotal": 8,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "a": Array [
+        Object {
+          "endLoc": Position {
+            "column": 6,
+            "line": 1,
+          },
+          "filename": "main.js",
+          "prettyCode": "   1 | <div a />;",
+          "propCode": "a",
+          "startLoc": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 6,
+            "line": 3,
+          },
+          "filename": "main.js",
+          "prettyCode": "   3 | <div a b />;",
+          "propCode": "a",
+          "startLoc": Position {
+            "column": 5,
+            "line": 3,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 6,
+            "line": 4,
+          },
+          "filename": "main.js",
+          "prettyCode": "   4 | <div a b c />;",
+          "propCode": "a",
+          "startLoc": Position {
+            "column": 5,
+            "line": 4,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "a": 3,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze ts directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 1,
+  },
+  "componentUsageTotal": 1,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "main.tsx",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "typescriptIsCool": Array [
+        Object {
+          "endLoc": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": "main.tsx",
+          "prettyCode": "   1 | <div typescriptIsCool />;",
+          "propCode": "typescriptIsCool",
+          "startLoc": Position {
+            "column": 5,
+            "line": 1,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "typescriptIsCool": 1,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;

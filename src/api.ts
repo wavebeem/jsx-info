@@ -3,6 +3,7 @@ import traverse from "@babel/traverse";
 import { JSXElement, Node } from "@babel/types";
 import fs from "fs";
 import globby from "globby";
+import path from "path";
 import { sleep } from "./sleep";
 
 /** Options passed to `analyze` */
@@ -23,6 +24,8 @@ export interface AnalyzeOptions {
   onFile?: (filename: string) => Promise<void>;
   /** Which JSX prop should we scan for (e.g. `id` or `variant=primary`) */
   prop?: string;
+  /** Use relative paths instead of absolute paths */
+  relativePaths?: boolean;
 }
 
 /** A location in source code */
@@ -62,6 +65,7 @@ export interface Analysis {
   errors: Record<string, ErrorInfo>;
   suggestedPlugins: string[];
   elapsedTime: number;
+  directory: string;
 }
 
 /**
@@ -77,30 +81,38 @@ export interface Analysis {
 export async function analyze({
   babelPlugins = [],
   components,
-  directory,
+  directory = process.cwd(),
   files = ["**/*.{js,jsx,tsx}"],
   gitignore = true,
   ignore = [],
   onFile,
-  prop: searchProp = "",
+  prop = "",
+  relativePaths = false,
 }: AnalyzeOptions): Promise<Analysis> {
+  function processFilename(filename: string): string {
+    if (relativePaths) {
+      return filename;
+    }
+    return path.resolve(directory, filename);
+  }
+  const searchProp = prop;
   const timeStart = Date.now();
   const filenames = await globby(files || "**/*.{js,jsx,tsx}", {
-    absolute: true,
+    absolute: !relativePaths,
     onlyFiles: true,
     gitignore,
     ignore,
-    cwd: directory || process.cwd(),
+    cwd: directory,
   });
   const reporter = new Reporter();
   for (const filename of filenames) {
     if (onFile) {
-      await onFile(filename);
+      await onFile(processFilename(filename));
     } else {
       await sleep();
     }
     try {
-      const code = fs.readFileSync(filename, "utf8");
+      const code = fs.readFileSync(path.resolve(directory, filename), "utf8");
       parse(code, {
         babelPlugins,
         typescript: filename.endsWith(".tsx") || filename.endsWith(".ts"),
@@ -138,7 +150,7 @@ export async function analyze({
                   node.loc.start.line,
                   node.loc.end.line
                 ),
-                filename,
+                filename: processFilename(filename),
               });
             }
           } else {
@@ -158,7 +170,7 @@ export async function analyze({
                 wantPropKey = key;
                 match = (value) => value === val;
               }
-              if (prop.propName !== wantPropKey) {
+              if (wantPropKey && prop.propName !== wantPropKey) {
                 return;
               }
               if (!match(prop.propValue)) {
@@ -173,7 +185,7 @@ export async function analyze({
                   prop.startLoc.line,
                   prop.endLoc.line
                 ),
-                filename,
+                filename: processFilename(filename),
               });
             }
           }
@@ -181,7 +193,7 @@ export async function analyze({
       });
     } catch (error) {
       if (error instanceof SyntaxError) {
-        reporter.addParseError(filename, error);
+        reporter.addParseError(processFilename(filename), error);
       } else {
         throw error;
       }
@@ -198,6 +210,7 @@ export async function analyze({
     errors: reporter.errors,
     suggestedPlugins: reporter.suggestedPlugins,
     elapsedTime: elapsedTime,
+    directory,
   };
 }
 
