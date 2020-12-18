@@ -6,7 +6,7 @@ function clean(analysis: Analysis, dir: string) {
   return {
     ...data,
     elapsedTime: elapsedTime * 0,
-    filenames: filenames.map((f) => f.replace(dir, "$ROOT")),
+    filenames: filenames.map((f) => path.relative(dir, f)),
   };
 }
 

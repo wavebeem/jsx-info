@@ -10,7 +10,7 @@ Object {
   "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "$ROOT/main.js",
+    "main.js",
   ],
   "lineUsage": Object {
     "div": Object {
@@ -93,7 +93,7 @@ Object {
     },
   },
   "filenames": Array [
-    "$ROOT/main.js",
+    "main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -115,7 +115,7 @@ Object {
   "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "$ROOT/main.js",
+    "main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -155,7 +155,7 @@ Object {
     },
   },
   "filenames": Array [
-    "$ROOT/main.js",
+    "main.js",
   ],
   "lineUsage": Object {},
   "propUsage": Object {},
@@ -173,7 +173,7 @@ Object {
   "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "$ROOT/main.js",
+    "main.js",
   ],
   "lineUsage": Object {
     "div": Object {
@@ -239,7 +239,7 @@ Object {
   "elapsedTime": 0,
   "errors": Object {},
   "filenames": Array [
-    "$ROOT/main.tsx",
+    "main.tsx",
   ],
   "lineUsage": Object {
     "div": Object {
