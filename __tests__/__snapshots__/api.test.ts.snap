@@ -7,7 +7,7 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "directory": "/Users/brian/w/jsx-info/fixtures/basic",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
@@ -78,7 +78,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "directory": "/Users/brian/w/jsx-info/fixtures/decorators",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {
     "main.js": Object {
@@ -114,7 +114,7 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 2,
-  "directory": "/Users/brian/w/jsx-info/fixtures/decorators",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
@@ -131,7 +131,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "directory": "/Users/brian/w/jsx-info/fixtures/empty",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [],
@@ -146,7 +146,7 @@ Object {
   "componentTotal": 0,
   "componentUsage": Object {},
   "componentUsageTotal": 0,
-  "directory": "/Users/brian/w/jsx-info/fixtures/error",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {
     "main.js": Object {
@@ -175,7 +175,7 @@ Object {
     "div": 8,
   },
   "componentUsageTotal": 8,
-  "directory": "/Users/brian/w/jsx-info/fixtures/prop-usage",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
@@ -242,7 +242,7 @@ Object {
     "div": 1,
   },
   "componentUsageTotal": 1,
-  "directory": "/Users/brian/w/jsx-info/fixtures/ts",
+  "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [

@@ -5,7 +5,7 @@ test("analyze empty directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/empty");
   const analysis = await analyze({ directory, relativePaths: true });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -22,7 +22,7 @@ test("analyze basic directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/basic");
   const analysis = await analyze({ directory, relativePaths: true });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -31,7 +31,7 @@ test("analyze ts directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/ts");
   const analysis = await analyze({ directory, relativePaths: true });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -40,7 +40,7 @@ test("analyze error directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/error");
   const analysis = await analyze({ directory, relativePaths: true });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -49,7 +49,7 @@ test("analyze decorators directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/decorators");
   const analysis = await analyze({ directory, relativePaths: true });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -62,7 +62,7 @@ test("analyze decorators directory with plugin decorators-legacy", async () => {
     relativePaths: true,
   });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
@@ -76,7 +76,7 @@ test("analyze prop-usage directory", async () => {
     relativePaths: true,
   });
   expect(analysis).toMatchSnapshot({
-    directory,
+    directory: expect.any(String),
     elapsedTime: expect.any(Number),
   });
 });
