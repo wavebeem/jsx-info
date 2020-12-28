@@ -1,3 +1,7 @@
+# v3.0.0
+
+- Removes accidentally exported function `parse`
+
 # v2.1.2
 
 - Adds missing TypeScript types

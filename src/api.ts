@@ -296,7 +296,7 @@ interface ParseOptions {
   onComponent?: (options: { componentName: string; node: JSXElement }) => void;
 }
 
-export function parse(code: string, options: ParseOptions = {}): void {
+function parse(code: string, options: ParseOptions = {}): void {
   const {
     typescript = false,
     babelPlugins = [],
