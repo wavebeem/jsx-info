@@ -3,6 +3,7 @@
   "version": "2.1.1",
   "description": "displays a report of JSX component and prop usage",
   "main": "dist/src/api.js",
+  "types": "dist/src/api.d.ts",
   "bin": "dist/src/jsx-info.js",
   "scripts": {
     "prepack": "rimraf dist && tsc",

@@ -1,3 +1,7 @@
+# v2.1.2
+
+- Adds missing TypeScript types
+
 # v2.1.1
 
 - Fixes a bug where prop usage wasn't collected
