@@ -13,9 +13,9 @@ test("analyze empty directory", async () => {
 test("analyze basic directory with absolute paths", async () => {
   const directory = path.resolve(__dirname, "../fixtures/basic");
   const analysis = await analyze({ directory });
-  expect(analysis.filenames).toMatchObject([
-    path.resolve(directory, "main.js"),
-  ]);
+  expect(
+    analysis.filenames.map((f) => path.resolve(directory, f))
+  ).toMatchObject([path.resolve(directory, "main.js")]);
 });
 
 test("analyze basic directory", async () => {
