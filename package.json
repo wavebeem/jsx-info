@@ -1,6 +1,6 @@
 {
   "name": "jsx-info",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "displays a report of JSX component and prop usage",
   "main": "dist/src/api.js",
   "types": "dist/src/api.d.ts",
