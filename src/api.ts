@@ -171,22 +171,27 @@ export async function analyze({
                 match = (value) => value === val;
               }
               if (wantPropKey && prop.propName !== wantPropKey) {
-                return;
+                continue;
               }
               if (!match(prop.propValue)) {
-                return;
+                continue;
               }
-              reporter.addProp(componentName, prop.propName, {
-                propCode: prop.propCode,
-                startLoc: prop.startLoc,
-                endLoc: prop.endLoc,
-                prettyCode: formatPrettyCode(
-                  code,
-                  prop.startLoc.line,
-                  prop.endLoc.line
-                ),
-                filename: processFilename(filename),
-              });
+              if (
+                (!wantPropKey || prop.propName === wantPropKey) &&
+                match(prop.propValue)
+              ) {
+                reporter.addProp(componentName, prop.propName, {
+                  propCode: prop.propCode,
+                  startLoc: prop.startLoc,
+                  endLoc: prop.endLoc,
+                  prettyCode: formatPrettyCode(
+                    code,
+                    prop.startLoc.line,
+                    prop.endLoc.line
+                  ),
+                  filename: processFilename(filename),
+                });
+              }
             }
           }
         },

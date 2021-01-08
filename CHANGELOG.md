@@ -1,3 +1,7 @@
+# v3.0.1
+
+- Fixes a bug where most props were ignored when searching by prop
+
 # v3.0.0
 
 - Removes accidentally exported function `parse`

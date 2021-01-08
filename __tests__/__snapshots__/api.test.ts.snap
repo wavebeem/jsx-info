@@ -168,6 +168,86 @@ Object {
 }
 `;
 
+exports[`analyze line-report directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 4,
+  },
+  "componentUsageTotal": 4,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
+    "main.js",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "id": Array [
+        Object {
+          "endLoc": Position {
+            "column": 55,
+            "line": 1,
+          },
+          "filename": "main.js",
+          "prettyCode": "   1 | <div className=\\"abc\\" style={{ fontSize: 20 }} id=\\"nice\\" />;",
+          "propCode": "id=\\"nice\\"",
+          "startLoc": Position {
+            "column": 46,
+            "line": 1,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 55,
+            "line": 2,
+          },
+          "filename": "main.js",
+          "prettyCode": "   2 | <div className=\\"efg\\" style={{ fontSize: 22 }} id=\\"cool\\" />;",
+          "propCode": "id=\\"cool\\"",
+          "startLoc": Position {
+            "column": 46,
+            "line": 2,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 57,
+            "line": 4,
+          },
+          "filename": "main.js",
+          "prettyCode": "   4 | <div className=\\"klm\\" style={{ fontSize: 26 }} id=\\"potato\\" />;",
+          "propCode": "id=\\"potato\\"",
+          "startLoc": Position {
+            "column": 46,
+            "line": 4,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 58,
+            "line": 5,
+          },
+          "filename": "main.js",
+          "prettyCode": "   5 | <div className=\\"nop\\" style={{ fontSize: 28 }} id={\\"salad\\"} />;",
+          "propCode": "id={\\"salad\\"}",
+          "startLoc": Position {
+            "column": 46,
+            "line": 5,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "id": 4,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;
+
 exports[`analyze prop-usage directory 1`] = `
 Object {
   "componentTotal": 1,
@@ -223,12 +303,25 @@ Object {
             "line": 4,
           },
         },
+        Object {
+          "endLoc": Position {
+            "column": 3,
+            "line": 12,
+          },
+          "filename": "main.js",
+          "prettyCode": "  12 |   a",
+          "propCode": "a",
+          "startLoc": Position {
+            "column": 2,
+            "line": 12,
+          },
+        },
       ],
     },
   },
   "propUsage": Object {
     "div": Object {
-      "a": 3,
+      "a": 4,
     },
   },
   "suggestedPlugins": Array [],

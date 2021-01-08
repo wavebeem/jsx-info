@@ -18,6 +18,20 @@ test("analyze basic directory with absolute paths", async () => {
   ).toMatchObject([path.resolve(directory, "main.js")]);
 });
 
+test("analyze line-report directory", async () => {
+  const directory = path.resolve(__dirname, "../fixtures/line-report");
+  const analysis = await analyze({
+    directory,
+    relativePaths: true,
+    components: ["div"],
+    prop: "id",
+  });
+  expect(analysis).toMatchSnapshot({
+    directory: expect.any(String),
+    elapsedTime: expect.any(Number),
+  });
+});
+
 test("analyze basic directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/basic");
   const analysis = await analyze({ directory, relativePaths: true });
