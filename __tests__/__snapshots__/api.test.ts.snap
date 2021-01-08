@@ -172,9 +172,9 @@ exports[`analyze line-report directory 1`] = `
 Object {
   "componentTotal": 1,
   "componentUsage": Object {
-    "div": 4,
+    "div": 5,
   },
-  "componentUsageTotal": 4,
+  "componentUsageTotal": 5,
   "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
@@ -186,54 +186,54 @@ Object {
       "id": Array [
         Object {
           "endLoc": Position {
-            "column": 55,
-            "line": 1,
+            "column": 61,
+            "line": 6,
           },
           "filename": "main.js",
-          "prettyCode": "   1 | <div className=\\"abc\\" style={{ fontSize: 20 }} id=\\"nice\\" />;",
+          "prettyCode": "   6 |       <div className=\\"abc\\" style={{ fontSize: 20 }} id=\\"nice\\" />",
           "propCode": "id=\\"nice\\"",
           "startLoc": Position {
-            "column": 46,
-            "line": 1,
+            "column": 52,
+            "line": 6,
           },
         },
         Object {
           "endLoc": Position {
-            "column": 55,
-            "line": 2,
+            "column": 61,
+            "line": 7,
           },
           "filename": "main.js",
-          "prettyCode": "   2 | <div className=\\"efg\\" style={{ fontSize: 22 }} id=\\"cool\\" />;",
+          "prettyCode": "   7 |       <div className=\\"efg\\" style={{ fontSize: 22 }} id=\\"cool\\" />",
           "propCode": "id=\\"cool\\"",
           "startLoc": Position {
-            "column": 46,
-            "line": 2,
+            "column": 52,
+            "line": 7,
           },
         },
         Object {
           "endLoc": Position {
-            "column": 57,
-            "line": 4,
+            "column": 63,
+            "line": 9,
           },
           "filename": "main.js",
-          "prettyCode": "   4 | <div className=\\"klm\\" style={{ fontSize: 26 }} id=\\"potato\\" />;",
+          "prettyCode": "   9 |       <div className=\\"klm\\" style={{ fontSize: 26 }} id=\\"potato\\" />",
           "propCode": "id=\\"potato\\"",
           "startLoc": Position {
-            "column": 46,
-            "line": 4,
+            "column": 52,
+            "line": 9,
           },
         },
         Object {
           "endLoc": Position {
-            "column": 58,
-            "line": 5,
+            "column": 64,
+            "line": 10,
           },
           "filename": "main.js",
-          "prettyCode": "   5 | <div className=\\"nop\\" style={{ fontSize: 28 }} id={\\"salad\\"} />;",
+          "prettyCode": "  10 |       <div className=\\"nop\\" style={{ fontSize: 28 }} id={\\"salad\\"} />",
           "propCode": "id={\\"salad\\"}",
           "startLoc": Position {
-            "column": 46,
-            "line": 5,
+            "column": 52,
+            "line": 10,
           },
         },
       ],
