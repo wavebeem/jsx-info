@@ -94,3 +94,18 @@ test("analyze prop-usage directory", async () => {
     elapsedTime: expect.any(Number),
   });
 });
+
+test("analyze multiple prop types in prop-usage directory", async () => {
+  const directory = path.resolve(__dirname, "../fixtures/prop-usage");
+  const analysis = await analyze({
+    directory,
+    files: ['multiplePropTypes.js'],
+    components: ["div"],
+    prop: "value",
+    relativePaths: true,
+  });
+  expect(analysis).toMatchSnapshot({
+    directory: expect.any(String),
+    elapsedTime: expect.any(Number),
+  });
+});
