@@ -45,7 +45,7 @@ export interface ErrorInfo {
 /** Information about a line where a prop was used */
 export interface LineInfo {
   propCode: string;
-  propValue: string | symbol;
+  propValue: string | symbol | undefined;
   prettyCode: string;
   startLoc: SourceLocation;
   endLoc: SourceLocation;
@@ -144,7 +144,7 @@ export async function analyze({
               }
               reporter.addProp(componentName, searchProp, {
                 propCode: code.slice(node.start || 0, node.end || -1),
-                propValue: formatPropValue(null),
+                propValue: undefined,
                 startLoc: node.loc.start,
                 endLoc: node.loc.end,
                 prettyCode: formatPrettyCode(
