@@ -32,6 +32,34 @@ test("analyze line-report directory", async () => {
   });
 });
 
+test("analyze line-report directory [style]", async () => {
+  const directory = path.resolve(__dirname, "../fixtures/line-report");
+  const analysis = await analyze({
+    directory,
+    relativePaths: true,
+    components: ["div"],
+    prop: "style",
+  });
+  expect(analysis).toMatchSnapshot({
+    directory: expect.any(String),
+    elapsedTime: expect.any(Number),
+  });
+});
+
+test("analyze line-report directory [none]", async () => {
+  const directory = path.resolve(__dirname, "../fixtures/line-report");
+  const analysis = await analyze({
+    directory,
+    relativePaths: true,
+    components: ["div"],
+    prop: "none",
+  });
+  expect(analysis).toMatchSnapshot({
+    directory: expect.any(String),
+    elapsedTime: expect.any(Number),
+  });
+});
+
 test("analyze basic directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/basic");
   const analysis = await analyze({ directory, relativePaths: true });
@@ -85,6 +113,7 @@ test("analyze prop-usage directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/prop-usage");
   const analysis = await analyze({
     directory,
+    files: ["main.js"],
     components: ["div"],
     prop: "a",
     relativePaths: true,
@@ -99,7 +128,7 @@ test("analyze multiple prop types in prop-usage directory", async () => {
   const directory = path.resolve(__dirname, "../fixtures/prop-usage");
   const analysis = await analyze({
     directory,
-    files: ['multiplePropTypes.js'],
+    files: ["multiplePropTypes.js"],
     components: ["div"],
     prop: "value",
     relativePaths: true,
