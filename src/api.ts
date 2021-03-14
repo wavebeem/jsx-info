@@ -47,8 +47,9 @@ export interface ErrorInfo {
  *
  * symbol is when prop value can't be represented (expression is used as prop value)
  * undefined is used when when prop value can't be calculated
+ * null when prop is with {null} value
  * */
-export type PropValue = symbol | number | string | boolean | undefined;
+export type PropValue = symbol | number | string | boolean | null | undefined;
 
 /** Information about a line where a prop was used */
 export interface LineInfo {
@@ -255,15 +256,14 @@ function formatPropValue(value: Node | null): PropValue {
   if (value === null) {
     return true;
   }
-  if (!value) {
-    return EXPRESSION;
-  }
   switch (value.type) {
     // TODO: Should we interpret anything else here?
     case "StringLiteral":
     case "NumericLiteral":
     case "BooleanLiteral":
       return value.value;
+    case "NullLiteral":
+      return null;
     case "JSXExpressionContainer":
       return formatPropValue(value.expression);
     default:

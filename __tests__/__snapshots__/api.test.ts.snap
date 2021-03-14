@@ -259,9 +259,9 @@ exports[`analyze multiple prop types in prop-usage directory 1`] = `
 Object {
   "componentTotal": 1,
   "componentUsage": Object {
-    "div": 7,
+    "div": 8,
   },
-  "componentUsageTotal": 7,
+  "componentUsageTotal": 8,
   "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
@@ -329,44 +329,58 @@ Object {
         },
         Object {
           "endLoc": Position {
-            "column": 20,
+            "column": 19,
             "line": 6,
           },
           "filename": "multiplePropTypes.js",
-          "prettyCode": "   6 |   <div value={false} /> {/* boolean */}",
+          "prettyCode": "   6 |   <div value={null} /> {/* null */}",
+          "propCode": "value={null}",
+          "propValue": null,
+          "startLoc": Position {
+            "column": 7,
+            "line": 6,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 20,
+            "line": 7,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   7 |   <div value={false} /> {/* boolean */}",
           "propCode": "value={false}",
           "propValue": false,
           "startLoc": Position {
             "column": 7,
-            "line": 6,
+            "line": 7,
           },
         },
         Object {
           "endLoc": Position {
             "column": 26,
-            "line": 7,
+            "line": 8,
           },
           "filename": "multiplePropTypes.js",
-          "prettyCode": "   7 |   <div value={\`It works!\`} /> {/* template literal */}",
+          "prettyCode": "   8 |   <div value={\`It works!\`} /> {/* template literal */}",
           "propCode": "value={\`It works!\`}",
           "propValue": Symbol(formatPropValue.EXPRESSION),
           "startLoc": Position {
             "column": 7,
-            "line": 7,
+            "line": 8,
           },
         },
         Object {
           "endLoc": Position {
             "column": 28,
-            "line": 8,
+            "line": 9,
           },
           "filename": "multiplePropTypes.js",
-          "prettyCode": "   8 |   <div value={\`\${10}-hello\`} /> {/* dynamic template literal */}",
+          "prettyCode": "   9 |   <div value={\`\${10}-hello\`} /> {/* dynamic template literal */}",
           "propCode": "value={\`\${10}-hello\`}",
           "propValue": Symbol(formatPropValue.EXPRESSION),
           "startLoc": Position {
             "column": 7,
-            "line": 8,
+            "line": 9,
           },
         },
       ],
@@ -374,7 +388,7 @@ Object {
   },
   "propUsage": Object {
     "div": Object {
-      "value": 7,
+      "value": 8,
     },
   },
   "suggestedPlugins": Array [],
@@ -385,9 +399,9 @@ exports[`analyze prop-usage directory 1`] = `
 Object {
   "componentTotal": 1,
   "componentUsage": Object {
-    "div": 15,
+    "div": 16,
   },
-  "componentUsageTotal": 15,
+  "componentUsageTotal": 16,
   "directory": Any<String>,
   "elapsedTime": Any<Number>,
   "errors": Object {},
