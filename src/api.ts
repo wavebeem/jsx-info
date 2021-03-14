@@ -42,10 +42,18 @@ export interface ErrorInfo {
   missingPlugin: string[];
 }
 
+/**
+ * All possible types of prop values.
+ *
+ * symbol is when prop value can't be represented (expression is used as prop value)
+ * undefined is used when when prop value can't be calculated
+ * */
+export type PropValue = symbol | number | string | boolean | undefined;
+
 /** Information about a line where a prop was used */
 export interface LineInfo {
   propCode: string;
-  propValue: string | symbol | undefined;
+  propValue: PropValue;
   prettyCode: string;
   startLoc: SourceLocation;
   endLoc: SourceLocation;
@@ -144,6 +152,7 @@ export async function analyze({
               }
               reporter.addProp(componentName, searchProp, {
                 propCode: code.slice(node.start || 0, node.end || -1),
+                // JSXElement doesn't contain prop value
                 propValue: undefined,
                 startLoc: node.loc.start,
                 endLoc: node.loc.end,
@@ -158,7 +167,7 @@ export async function analyze({
           } else {
             for (const prop of props) {
               let wantPropKey = searchProp;
-              let match = (_value: string | symbol): boolean => true;
+              let match = (_value: PropValue): boolean => true;
               if (searchProp.includes("!=")) {
                 const index = searchProp.indexOf("!=");
                 const key = searchProp.slice(0, index);
@@ -242,9 +251,9 @@ function getLines(code: string): string[] {
 
 const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
 
-function formatPropValue(value: Node | null): string | symbol {
+function formatPropValue(value: Node | null): PropValue {
   if (value === null) {
-    return "true";
+    return true;
   }
   if (!value) {
     return EXPRESSION;
@@ -252,12 +261,11 @@ function formatPropValue(value: Node | null): string | symbol {
   switch (value.type) {
     // TODO: Should we interpret anything else here?
     case "StringLiteral":
+    case "NumericLiteral":
+    case "BooleanLiteral":
       return value.value;
     case "JSXExpressionContainer":
       return formatPropValue(value.expression);
-    case "NumericLiteral":
-    case "BooleanLiteral":
-      return String(value.value);
     default:
       return EXPRESSION;
   }
