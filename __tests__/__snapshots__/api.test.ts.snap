@@ -24,6 +24,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "a",
+          "propValue": true,
           "startLoc": Position {
             "column": 5,
             "line": 1,
@@ -39,6 +40,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "b",
+          "propValue": true,
           "startLoc": Position {
             "column": 7,
             "line": 1,
@@ -54,6 +56,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   1 | <div a b c />;",
           "propCode": "c",
+          "propValue": true,
           "startLoc": Position {
             "column": 9,
             "line": 1,
@@ -192,6 +195,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   6 |       <div className=\\"abc\\" style={{ fontSize: 20 }} id=\\"nice\\" />",
           "propCode": "id=\\"nice\\"",
+          "propValue": "nice",
           "startLoc": Position {
             "column": 52,
             "line": 6,
@@ -205,6 +209,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   7 |       <div className=\\"efg\\" style={{ fontSize: 22 }} id=\\"cool\\" />",
           "propCode": "id=\\"cool\\"",
+          "propValue": "cool",
           "startLoc": Position {
             "column": 52,
             "line": 7,
@@ -218,6 +223,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   9 |       <div className=\\"klm\\" style={{ fontSize: 26 }} id=\\"potato\\" />",
           "propCode": "id=\\"potato\\"",
+          "propValue": "potato",
           "startLoc": Position {
             "column": 52,
             "line": 9,
@@ -231,6 +237,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "  10 |       <div className=\\"nop\\" style={{ fontSize: 28 }} id={\\"salad\\"} />",
           "propCode": "id={\\"salad\\"}",
+          "propValue": "salad",
           "startLoc": Position {
             "column": 52,
             "line": 10,
@@ -248,7 +255,7 @@ Object {
 }
 `;
 
-exports[`analyze prop-usage directory 1`] = `
+exports[`analyze multiple prop types in prop-usage directory 1`] = `
 Object {
   "componentTotal": 1,
   "componentUsage": Object {
@@ -259,7 +266,148 @@ Object {
   "elapsedTime": Any<Number>,
   "errors": Object {},
   "filenames": Array [
+    "multiplePropTypes.js",
+  ],
+  "lineUsage": Object {
+    "div": Object {
+      "value": Array [
+        Object {
+          "endLoc": Position {
+            "column": 43,
+            "line": 2,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   2 |   <div value=\\"asdfjklasdfjklasdfjklasdfjkl\\" /> {/* string */}",
+          "propCode": "value=\\"asdfjklasdfjklasdfjklasdfjkl\\"",
+          "propValue": "asdfjklasdfjklasdfjklasdfjkl",
+          "startLoc": Position {
+            "column": 7,
+            "line": 2,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 17,
+            "line": 3,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   3 |   <div value={10} /> {/* number */}",
+          "propCode": "value={10}",
+          "propValue": 10,
+          "startLoc": Position {
+            "column": 7,
+            "line": 3,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 37,
+            "line": 4,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   4 |   <div value={{propKey: 'propValue'}} /> {/* object */}",
+          "propCode": "value={{propKey: 'propValue'}}",
+          "propValue": Symbol(formatPropValue.EXPRESSION),
+          "startLoc": Position {
+            "column": 7,
+            "line": 4,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 12,
+            "line": 5,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   5 |   <div value /> {/* boolean */}",
+          "propCode": "value",
+          "propValue": true,
+          "startLoc": Position {
+            "column": 7,
+            "line": 5,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 19,
+            "line": 6,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   6 |   <div value={null} /> {/* null */}",
+          "propCode": "value={null}",
+          "propValue": null,
+          "startLoc": Position {
+            "column": 7,
+            "line": 6,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 20,
+            "line": 7,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   7 |   <div value={false} /> {/* boolean */}",
+          "propCode": "value={false}",
+          "propValue": false,
+          "startLoc": Position {
+            "column": 7,
+            "line": 7,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 26,
+            "line": 8,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   8 |   <div value={\`It works!\`} /> {/* template literal */}",
+          "propCode": "value={\`It works!\`}",
+          "propValue": Symbol(formatPropValue.EXPRESSION),
+          "startLoc": Position {
+            "column": 7,
+            "line": 8,
+          },
+        },
+        Object {
+          "endLoc": Position {
+            "column": 28,
+            "line": 9,
+          },
+          "filename": "multiplePropTypes.js",
+          "prettyCode": "   9 |   <div value={\`\${10}-hello\`} /> {/* dynamic template literal */}",
+          "propCode": "value={\`\${10}-hello\`}",
+          "propValue": Symbol(formatPropValue.EXPRESSION),
+          "startLoc": Position {
+            "column": 7,
+            "line": 9,
+          },
+        },
+      ],
+    },
+  },
+  "propUsage": Object {
+    "div": Object {
+      "value": 8,
+    },
+  },
+  "suggestedPlugins": Array [],
+}
+`;
+
+exports[`analyze prop-usage directory 1`] = `
+Object {
+  "componentTotal": 1,
+  "componentUsage": Object {
+    "div": 16,
+  },
+  "componentUsageTotal": 16,
+  "directory": Any<String>,
+  "elapsedTime": Any<Number>,
+  "errors": Object {},
+  "filenames": Array [
     "main.js",
+    "multiplePropTypes.js",
   ],
   "lineUsage": Object {
     "div": Object {
@@ -272,6 +420,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   1 | <div a />;",
           "propCode": "a",
+          "propValue": true,
           "startLoc": Position {
             "column": 5,
             "line": 1,
@@ -285,6 +434,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   3 | <div a b />;",
           "propCode": "a",
+          "propValue": true,
           "startLoc": Position {
             "column": 5,
             "line": 3,
@@ -298,6 +448,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "   4 | <div a b c />;",
           "propCode": "a",
+          "propValue": true,
           "startLoc": Position {
             "column": 5,
             "line": 4,
@@ -311,6 +462,7 @@ Object {
           "filename": "main.js",
           "prettyCode": "  12 |   a",
           "propCode": "a",
+          "propValue": true,
           "startLoc": Position {
             "column": 2,
             "line": 12,
@@ -352,6 +504,7 @@ Object {
           "filename": "main.tsx",
           "prettyCode": "   1 | <div typescriptIsCool />;",
           "propCode": "typescriptIsCool",
+          "propValue": true,
           "startLoc": Position {
             "column": 5,
             "line": 1,
