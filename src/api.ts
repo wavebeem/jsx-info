@@ -43,12 +43,23 @@ export interface ErrorInfo {
 }
 
 /**
- * All possible types of prop values.
+ * Prop values are tagged with a `type` field to facilitate understanding and
+ * extensibility as the project grows.
  *
- * symbol is when prop value can't be represented (expression is used as prop value)
- * undefined is used when when prop value can't be calculated
- * null when prop is with {null} value
- * */
+ * - **none:** The prop wasn't used at the given location.
+ *
+ * - **expression:** Expression that can't be evaluated by scanning the code
+ *   (e.g. array, object, function call, etc.).
+ *
+ * - **literal:** Literal value such as a string, boolean, number, etc. (NOTE:
+ *   `undefined` is technically a variable, but I think most people expect it to
+ *   be a literal).
+ *
+ * More types may be added in the future, if requested. I can see use cases for
+ * adding arrays and objects as values, though those have the potential to have
+ * expressions embedded within them. I still have too many questions about how
+ * to handle composite values like that, so I'm just not supporting them yet.
+ */
 export type PropValue =
   | { type: "none" }
   | { type: "expression" }
