@@ -1,3 +1,7 @@
+# Unreleased
+
+- Added `propValue` field `LineInfo`
+
 # v3.0.1
 
 - Fixes a bug where most props were ignored when searching by prop

@@ -42,9 +42,37 @@ export interface ErrorInfo {
   missingPlugin: string[];
 }
 
+/**
+ * Prop values are tagged with a `type` field to facilitate understanding and
+ * extensibility as the project grows.
+ *
+ * - **none:** The prop wasn't used at the given location.
+ *
+ * - **expression:** Expression that can't be evaluated by scanning the code
+ *   (e.g. array, object, function call, etc.).
+ *
+ * - **literal:** Literal value such as a string, boolean, number, etc. (NOTE:
+ *   `undefined` is technically a variable, but I think most people expect it to
+ *   be a literal).
+ *
+ * More types may be added in the future, if requested. I can see use cases for
+ * adding arrays and objects as values, though those have the potential to have
+ * expressions embedded within them. I still have too many questions about how
+ * to handle composite values like that, so I'm just not supporting them yet.
+ */
+export type PropValue =
+  | { type: "none" }
+  | { type: "expression" }
+  | {
+      type: "literal";
+      text: string;
+      value: number | string | boolean | undefined | null;
+    };
+
 /** Information about a line where a prop was used */
 export interface LineInfo {
   propCode: string;
+  propValue: PropValue;
   prettyCode: string;
   startLoc: SourceLocation;
   endLoc: SourceLocation;
@@ -143,6 +171,8 @@ export async function analyze({
               }
               reporter.addProp(componentName, searchProp, {
                 propCode: code.slice(node.start || 0, node.end || -1),
+                // JSXElement doesn't contain prop value
+                propValue: { type: "none" },
                 startLoc: node.loc.start,
                 endLoc: node.loc.end,
                 prettyCode: formatPrettyCode(
@@ -156,7 +186,7 @@ export async function analyze({
           } else {
             for (const prop of props) {
               let wantPropKey = searchProp;
-              let match = (_value: string | symbol): boolean => true;
+              let match = (_value: string): boolean => true;
               if (searchProp.includes("!=")) {
                 const index = searchProp.indexOf("!=");
                 const key = searchProp.slice(0, index);
@@ -173,25 +203,24 @@ export async function analyze({
               if (wantPropKey && prop.propName !== wantPropKey) {
                 continue;
               }
-              if (!match(prop.propValue)) {
+              if (
+                prop.propValue.type === "literal" &&
+                !match(prop.propValue.text)
+              ) {
                 continue;
               }
-              if (
-                (!wantPropKey || prop.propName === wantPropKey) &&
-                match(prop.propValue)
-              ) {
-                reporter.addProp(componentName, prop.propName, {
-                  propCode: prop.propCode,
-                  startLoc: prop.startLoc,
-                  endLoc: prop.endLoc,
-                  prettyCode: formatPrettyCode(
-                    code,
-                    prop.startLoc.line,
-                    prop.endLoc.line
-                  ),
-                  filename: processFilename(filename),
-                });
-              }
+              reporter.addProp(componentName, prop.propName, {
+                propCode: prop.propCode,
+                propValue: prop.propValue,
+                startLoc: prop.startLoc,
+                endLoc: prop.endLoc,
+                prettyCode: formatPrettyCode(
+                  code,
+                  prop.startLoc.line,
+                  prop.endLoc.line
+                ),
+                filename: processFilename(filename),
+              });
             }
           }
         },
@@ -237,26 +266,27 @@ function getLines(code: string): string[] {
   return lines;
 }
 
-const EXPRESSION = Symbol("formatPropValue.EXPRESSION");
-
-function formatPropValue(value: Node | null): string | symbol {
+function formatPropValue(value: Node | null): PropValue {
   if (value === null) {
-    return "true";
-  }
-  if (!value) {
-    return EXPRESSION;
+    return { type: "literal", value: true, text: String(true) };
   }
   switch (value.type) {
-    // TODO: Should we interpret anything else here?
+    // TODO: NaN, Infinity, -Infinity
+    case "Identifier":
+      if (value.name === "undefined") {
+        return { type: "literal", value: undefined, text: String(undefined) };
+      }
+      return { type: "expression" };
+    case "BooleanLiteral":
     case "StringLiteral":
-      return value.value;
+    case "NumericLiteral":
+      return { type: "literal", value: value.value, text: String(value.value) };
+    case "NullLiteral":
+      return { type: "literal", value: null, text: String(null) };
     case "JSXExpressionContainer":
       return formatPropValue(value.expression);
-    case "NumericLiteral":
-    case "BooleanLiteral":
-      return String(value.value);
     default:
-      return EXPRESSION;
+      return { type: "expression" };
   }
 }
 
@@ -275,7 +305,7 @@ function getAttributeName(attributeNode: Node): string {
   }
 }
 
-function createProp(attributeNode: Node) {
+function createProp(attributeNode: Node): string {
   return getAttributeName(attributeNode);
 }
 
@@ -290,11 +320,11 @@ function getDottedName(nameNode: Node): string {
   }
 }
 
-function createComponent(componentNode: JSXElement) {
+function createComponent(componentNode: JSXElement): string {
   return getDottedName(componentNode.openingElement.name);
 }
 
-interface ParseOptions {
+export interface ParseOptions {
   typescript?: boolean;
   babelPlugins?: ParserPlugin[];
   onlyComponents?: string[];
@@ -400,7 +430,7 @@ class Reporter {
     }
   }
 
-  addProp(componentName: string, propName: string, line: LineInfo) {
+  addProp(componentName: string, propName: string, line: LineInfo): void {
     this._incrementProp(componentName, propName);
     this._ensureLines(componentName, propName);
     this.lines[componentName][propName].push(line);
