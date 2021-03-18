@@ -8,7 +8,7 @@
   "scripts": {
     "prepack": "rimraf dist && tsc",
     "preversion": "npm run eslint && npm run prettier && npm test",
-    "postversion": "git push && git push --tags && npm publish",
+    "postversion": "git push --follow-tags && npm publish",
     "start": "tsc --watch",
     "upgrade": "npm-check --update",
     "lint": "npm run eslint && npm run prettier",
